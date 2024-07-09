@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Administración de reservas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Auditoria reserva de canchas -->
+<div class="card">
+    <div class="card-header"><h3>Auditoría reserva de canchas</h3></div>
+    <div class="card-body">
+        <table id="tablaAuditoriaTurnos" class="table table-hover table-bordered table-responsive-md"></table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tablaAuditoriaTurnos").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                select: {
+                    style: 'os',
+                    items: 'cell'
+                },
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100],
+                    ['10 filas', '25 filas', '50 filas', '100 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Turnos/cargarAuditoriaTurnos",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar por actividad...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "id", "title": "Reserva", "name": "id", "width": "10%" },
+                    { "data": "Usuario", "title": "Responsable", "name": "Usuario", "width": "15%" },
+                    { "data": "ActividadNombre", "title": "Actividad", "name": "ActividadNombre", "width": "10%" },
+                    { "data": "CanchaNum", "title": "Cancha", "name": "CanchaNum", "width": "10%" },
+
+                    {
+                        "data": "Fecha", "title": "Fecha", "name": "Fecha", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }, "width": "10%"
+                    },
+
+                    { "data": "HoraText", "title": "Hora", "name": "HoraText", "width": "15%" },
+                    { "data": "Jugadores", "title": "Jugadores", "name": "Jugadores", "width": "10%" },
+                    { "data": "Precio", "title": "Precio", "name": "Precio", "width": "10%" },                    
+                    { "data": "FdPagoText", "title": "Forma de pago", "name": "fdPago", "width": "10%" },
+                    //{ "data": "PagoText", "title": "Pago", "name": "Pago", "width": "10%" }
+                ]
+            });
+        });
+    </script>
+}
+

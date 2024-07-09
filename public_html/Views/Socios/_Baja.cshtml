@@ -1,0 +1,12 @@
+﻿@model webCentenario.Models.ViewModels.bajaViewModel
+
+@using (Html.BeginForm("Baja", "Socios", FormMethod.Post, new { id = "formBaja" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-12">
+        @Html.HiddenFor(model => model.socioID)
+        @Html.LabelFor(model => model.selCausaBaja, htmlAttributes: new { @class = "form-label" })
+        @Html.DropDownListFor(model => model.selCausaBaja, Model.causaBajaList, "(Seleccionar causa baja)", new { @class = "form-select" })
+        <span class="field-validation-valid" id="formMensaje"></span>
+    </div>
+}

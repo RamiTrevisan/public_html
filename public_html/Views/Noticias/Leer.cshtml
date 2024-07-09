@@ -1,0 +1,24 @@
+﻿@model webCentenario.Models.ViewModels.postViewModel
+@using webCentenario.Helpers
+
+@{
+    ViewBag.Title = Model.postTitulo;
+    if (Model.postCategoriaID == 1)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    }
+}
+
+<div class="row row-cols-1">
+    <div class="col mb-3">
+        <h2>@Model.postTitulo</h2>
+        <small class="text-muted cat">
+            <i class="far fa-calendar-alt text-primary"></i> @Html.DisplayFor(modelItem => Model.postFechaCreacion)
+        </small>
+        <div class="mt-2">@Html.Raw(Server.HtmlDecode(Model.postContenido))</div>
+    </div>
+</div>

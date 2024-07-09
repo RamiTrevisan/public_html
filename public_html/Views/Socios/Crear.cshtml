@@ -1,0 +1,191 @@
+﻿@model webCentenario.Models.ViewModels.socioEditViewModel
+
+@{
+    ViewBag.Title = "Crear socio";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Crear socio</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¡Listo!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    @if (ViewBag.SocioID != null)
+                    {
+                        @Html.ActionLink("Detalles", "Detalles", "Socios", new { id = ViewBag.SocioID }, new { @class = "btn btn-sm btn-primary" })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Crear", "Socios", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioNombre, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioNombre, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioNombre, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioApellido, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioApellido, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioApellido, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selProv, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selProv, Model.provList, "(Seleccionar provincia)", new { @class = "form-control", @Value = 22 })
+                            @Html.ValidationMessageFor(model => model.selProv, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selLoc, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selLoc, Model.locList, "(Seleccionar localidad)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selLoc, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-12">
+                            @Html.LabelFor(model => model.socioDireccion, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioDireccion, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioDireccion, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioFechaNacimiento, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioFechaNacimiento, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.socioFechaNacimiento, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSex, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSex, Model.sexList, "(Seleccionar sexo)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSex, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selTipoDoc, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selTipoDoc, Model.tipoDocList, "(Seleccionar tipo documento)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selTipoDoc, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioNumDoc, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioNumDoc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioNumDoc, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioTelefono, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioTelefono, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioTelefono, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.socioEmail, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.socioEmail, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.socioEmail, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            @Html.ActionLink("Volver", "Listado", new { }, new { @class = "btn btn-secondary" })
+                            <input type="submit" value="Dar de alta" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+
+            $("#selProv").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar provincia)',
+                width: 'auto'
+            });
+
+            $("#selLoc").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar localidad)',
+                width: 'auto'
+            });
+
+            $("#selTipoDoc").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar tipo documento)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $("#selSex").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar sexo)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $("#selCat").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar categoría)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $("#selZonaCobro").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar zona de cobro)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $(selProv).change(function () {
+                $.ajax({
+                    type: "post",
+                    url: "/Socios/ObtenerLocalidades",
+                    data: { id: $(selProv).val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selLoc).empty();
+                        @*
+                        if ($(selProv).val() > 0) {
+                            $(selLoc).prop("disabled", false);
+                            $(selLoc).append("<option value>(Seleccionar localidad)</option>")
+                        } else {
+                            $(selLoc).prop("disabled", true);
+                            $(selLoc).append("<option value>(Seleccionar localidad)</option>")
+                        }*@
+
+                        $.each(data, function (index, row) {
+                            $(selLoc).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

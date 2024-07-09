@@ -1,0 +1,47 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<webCentenario.Models.ViewModels.postViewModel>
+
+@{
+    ViewBag.Title = "Inicio";
+}
+<br />
+<h3>Noticias recientes</h3>
+<hr />
+
+<div class="row row-cols-1 p-4 align-items-center rounded-3 border shadow-lg my-5">
+    <div class="col mb-3">
+        @foreach (var post in Model)
+        {
+            <div class="card my-4">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img class="w-100 h-auto" src="~/Content/images/noticias.png" draggable="false"/>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.postTitulo</h5>
+                            <p class="card-text">@post.postContentTrimmed</p>
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => post.postFechaCreacion)</small></p>
+                            <a href="@Url.Action("Leer", "Noticias", new { id = post.postID })" class="btn btn-sm btn-outline-primary stretched-link">Leer noticia</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.PageCount > 1)
+{
+    <div class="pagination">
+        @Html.PagedListPager(Model, pag => Url.Action("Index", new { pag, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+         new PagedListRenderOptions
+         {
+             MaximumPageNumbersToDisplay = 5,
+             DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+         })
+    </div>
+}

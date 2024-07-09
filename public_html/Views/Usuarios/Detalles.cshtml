@@ -1,0 +1,129 @@
+﻿@model webCentenario.Models.ViewModels.usuarioViewModel
+
+@{
+    ViewBag.Title = "Detalles de usuario";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Viendo el usuario de <b>@Model.userSocioNombre</b></h3>
+<br />
+
+<div class="row">
+    <div class="col">
+        <div class="card mb-3">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.userEmail):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.userEmail)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.userRolNombre):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.userRolNombre)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.userFechaCreacion):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.userFechaCreacion)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.userUltimoIngreso):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.userUltimoIngreso)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        @Html.ActionLink("Volver", "Listado", "Usuarios", new { }, new { @class = "btn btn-secondary" })
+        @Html.ActionLink("Modificar", "Modificar", "Usuarios", new { id = Model.userID }, new { @class = "btn btn-secondary" })
+        <button type="button" class="btn btn-danger" onclick="Confirmar(@Model.userID)">Eliminar</button>
+    </div>
+</div>
+
+<div class="modal fade" id="eliminarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que quieres eliminar a este usuario? <b>Esta acción no se puede deshacer</b>.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Eliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para eliminar el usuario. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="userID" hidden />
+
+@section scripts {
+    <script>
+        function Confirmar(userID) {
+
+            $("#userID").val(userID);
+            $("#eliminarModal").modal('show');
+        }
+
+        function Eliminar() {
+
+            var userID = $("#userID").val();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Eliminar", "Usuarios")",
+                data: { id: userID },
+                success: function (data)
+                {
+                    if (data.result == true)
+                    {
+                        $("#eliminarModal").modal("hide");
+                        window.location.href = "@Url.Action("Listado", "Usuarios")"
+                    }
+                    else
+                    {
+                        $("#eliminarModal").modal("hide");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function (data) {
+                    $("#eliminarModal").modal("hide");
+                    $("#errorModal").modal('show');
+                }
+            })
+        }
+
+    </script>
+}
+

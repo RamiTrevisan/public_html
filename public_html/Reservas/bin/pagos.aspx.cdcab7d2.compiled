@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/Pagos.aspx" hash="25cc926cb" filehash="b47d1b8ee264a144" flags="110000" assembly="canchas" type="ASP.pagos_aspx">
+  <filedeps>
+    <filedep name="/Paddle/Default.master" />
+    <filedep name="/Paddle/Default.master.vb" />
+    <filedep name="/Paddle/Pagos.aspx" />
+    <filedep name="/Paddle/Pagos.aspx.vb" />
+  </filedeps>
+</preserve>

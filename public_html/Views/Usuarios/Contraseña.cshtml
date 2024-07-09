@@ -1,0 +1,72 @@
+﻿@model webCentenario.Models.ViewModels.usuarioContraseñaViewModel
+@{
+    ViewBag.Title = "Configuración";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Configuración de usuario</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¡Listo!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Contraseña", "Usuarios", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        @Html.AntiForgeryToken()
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.userContraseña, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextBoxFor(model => model.userContraseña, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userContraseña, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userNuevaContraseña, htmlAttributes: new { @class = "form-label" })
+                            @Html.PasswordFor(model => model.userNuevaContraseña, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userNuevaContraseña, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userConfirmarContraseña, htmlAttributes: new { @class = "form-label" })
+                            @Html.PasswordFor(model => model.userConfirmarContraseña, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userConfirmarContraseña, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            <input type="submit" value="Cambiar contraseña" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+        });
+    </script>
+}

@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/images/favicon.png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+    <title>@ViewBag.Title - Centenario WEB</title>
+    @Styles.Render("~/bundles/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <style>
+        .social:hover {
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -o-transform: scale(1.1);
+        }
+
+        .social {
+            -webkit-transform: scale(0.8);
+            -moz-transform: scale(0.8);
+            -o-transform: scale(0.8);
+            -webkit-transition-duration: 0.5s;
+            -moz-transition-duration: 0.5s;
+            -o-transition-duration: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1C30CD">
+        <img src="~/Content/images/favicon.png" alt="" height="40" class="d-inline-block align-top" style="margin-right: 10px;">
+        @Html.ActionLink("Centenario WEB", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        <div class="nav" style="min-height:40px;">
+            <button class="btn btn-link navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav">
+                <span class="fas fa-arrow-down"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    @Html.ActionLink("PORTAL", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                @if (Session["Session"] != null || Request.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("SISTEMA", "Inicio", "Sistema", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                }
+            </ul>
+            @if (Session["Session"] == null || !Request.IsAuthenticated)
+            {
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        @Html.ActionLink("Acceso usuarios", "Acceso", "Usuarios", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                </ul>
+            }
+            else
+            {
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userNavDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @HttpContext.Current.Session["userEmail"].ToString()
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userNavDropdown">
+                            <a class="dropdown-item" href="@Url.Action("Contraseña", "Usuarios")">Cambiar contraseña</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="@Url.Action("Desconectarse", "Usuarios")">Desconectarse</a>
+                        </ul>
+                    </li>
+                </ul>
+            }
+        </div>
+    </nav>
+    @if (ViewBag.RenderHeader != null && ViewBag.RenderHeader == true)
+    {
+        <header class="img-fluid">
+            <img class="w-100 h-auto" src="~/Content/images/banner.png" draggable="false"/>
+        </header>
+    }
+    <main>
+        <div id="layout">
+            <div id="layout_content">
+                <div class="container body-content mt-4">
+                    @RenderBody()
+                </div>
+
+                @if (ViewBag.RenderHeader != null && ViewBag.RenderHeader == true)
+                {
+                    <div class="container-fluid bg-dark py-5 text-center mb-5">
+                        <div class="row align-items-center g-lg-5 py-3">
+                            <div class="col-lg-12 text-center text-white">
+                                <h3 class="fw-bold lh-1 mb-3">¡Estamos en las redes!</h3>
+                                <div style="font-size: 50px;">
+                                    <a class="text-white p-2" href="https://www.facebook.com/Centenario-MSD-y-B-107135477504936"><i class="social fab fa-facebook-square"></i></a>
+                                    <a class="text-white p-2" href="https://www.instagram.com/centenariomsdyb/"><i class="social fab fa-instagram-square"></i></a>
+                                    <a class="text-white p-2" href="https://twitter.com/centenarioweb"><i class="social fab fa-twitter-square"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <footer class="footer">
+                    <center><p style="font-size: calc(0.55em + 0.55vw)">Centenario WEB &copy; @DateTime.Now.Year - Desarrollado por <a href="https://conmate.com.ar">ConMate</a></p></center>
+                </footer>
+            </div>
+        </div>
+    </main>
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

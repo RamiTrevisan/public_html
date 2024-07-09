@@ -1,0 +1,228 @@
+﻿@model List<webCentenario.Models.ViewModels.cuotaSocioViewModel>
+
+@{
+    ViewBag.Title = "Cuotas pendientes";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Listado de cuotas de actividades pendientes</h3>
+<br />
+
+<table id="tablaPendientes" class="table table-hover table-bordered table-responsive-md"></table>
+
+<div class="modal fade" id="aConfirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Aprobar?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-success" onclick="Aprobar()">Aprobar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rConfirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Rechazar?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Rechazar()">Rechazar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Algo no salió bien...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="caID" hidden />
+
+@section scripts {
+
+    <script>
+        function aConfirmar(csID) {
+
+            $("#caID").val(caID);
+            $('#aConfirmModal .modal-body').html("Vas a <b>APROBAR</b> el pago de la cuota seleccionada (#" + caID + "), ¿está seguro?");
+            $("#aConfirmModal").modal('show');
+        }
+
+        function Aprobar() {
+
+            var caID = $("#caID").val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Aprobar", "Actividades")",
+                data: { id: caID },
+                success: function (result) {
+                    if (result == true) {
+                        $("#aConfirmModal").modal('hide');
+                        tabla = $('#tablaPendientes').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información de la cuota seleccionada. Si el error persiste, comunicate con el desarrollador.");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información de la cuota seleccionada. Si el error persiste, comunicate con el desarrollador.");
+                    $("#errorModal").modal('show');
+                }
+            });
+        }
+
+        function rConfirmar(caID) {
+
+            $("#caID").val(caID);
+            $('#rConfirmModal .modal-body').html("Vas a <b>RECHAZAR</b> el pago de la cuota seleccionada (#" + caID + "), ¿está seguro?");
+            $("#rConfirmModal").modal('show');
+        }
+
+        function Rechazar() {
+
+            var caID = $("#caID").val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Rechazar", "Actividades")",
+                data: { id: caID },
+                success: function (result) {
+                    if (result == true) {
+                        $("#rConfirmModal").modal('hide');
+                        tabla = $('#tablaPendientes').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información de la cuota seleccionada. Si el error persiste, comunicate con el desarrollador.");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información de la cuota seleccionada. Si el error persiste, comunicate con el desarrollador.");
+                    $("#errorModal").modal('show');
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            $("#tablaPendientes").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['10%', '30%', '15%', '20%', '15%', '10%'];
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Actividades/CargarPendientes",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "caID", "title": "#", "name": "caID" },
+                    { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "20%" },
+                    { "data": "caActividadNombre", "title": "Categoría", "name": "caActividadNombre", "width": "20%" },
+                    {
+                        "data": "caFechaPeriodo", "title": "Período", "name": "caFechaPeriodo", "render": function (data) {
+                            return moment(data).format('MMMM YYYY');
+                        }, "width": "20%"
+                    },
+                    {
+                        "data": "caFechaPago", "title": "Fecha de pago", "name": "caFechaPago", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                        }, "width": "20%"
+                    },
+                    { "data": "caMonto", "title": "Monto", "name": "caMonto", "width": "19%" },
+                    {
+                        data: null, render: function (data, type, row) {
+                            return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-success" onclick="aConfirmar(' + row.csID + ')">Aprobar</a><a class="btn bt-sm btn-danger" onclick="rConfirmar(' + row.csID + ')">Rechazar</a></div>';
+                        }, "width": "5%", "className": "text-center"
+                    }
+                ]
+            });
+        });
+    </script>
+}

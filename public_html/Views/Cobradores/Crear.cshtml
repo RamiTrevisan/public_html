@@ -1,0 +1,93 @@
+﻿@model webCentenario.Models.ViewModels.cobradoresViewModel
+
+@{
+    ViewBag.Title = "Crear cobrador";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    string ext = ViewBag.Exito;
+}
+
+<h3>Crear cobrador</h3>
+<br />
+
+@using (Html.BeginForm("Crear", "Cobradores", FormMethod.Post))
+{
+
+    <div class="card p-3">
+        <div class="row">
+
+            <!-- Nombre -->
+            <div class="col-md-6">
+                @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <!-- Descripción -->
+            <div class="col-md-6">
+                @Html.LabelFor(model => model.Descripcion, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Descripcion, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <!-- btnReservar -->
+            <div class="col-md-12 mt-3">
+                <button type="submit" id="crear" name="crear" value="Crear" class="btn btn-primary" onclick="Confirmar()">Crear cobrador</button>
+            </div>
+
+        </div>
+    </div>
+}
+
+
+
+<!-- Creado correctamente-->
+<!--<div class="modal fade" id="InfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Cobrador creador correctamente.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- Error Modal -->
+<!--<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para eliminar al cobrador. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+            function Confirmar() {
+
+                $("#InfoModal").modal('show');
+
+                $("#ErrorModal").modal('show');
+            }
+        });
+        
+
+    </script>
+}-->

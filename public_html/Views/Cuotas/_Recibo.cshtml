@@ -1,0 +1,74 @@
+﻿@model webCentenario.Models.ViewModels.reciboViewModel
+
+@{
+    ViewBag.Title = "Recibo";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+
+<style>
+    .flexrow {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex !important;
+    }
+
+        .flexrow > div {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+        }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row flexrow p-3 mb-4">
+            <div class="col-3 pull-left"><img src="~/Content/images/favicon.png" class="img-responsive"></div>
+            <div class="col-6 text-center">
+                <h3 class="pt-3"><b>CENTENARIO M. S. D. y B.</b></h3>
+                <p>San Martín y Castellanos — San José de la Esquina</p>
+            </div>
+            <div class="col-3 text-right">
+                <h5 class="pt-4">RECIBO #@Model.reciboID</h5>
+                <p class="text-muted"><i>@Model.reciboFecha.ToString("dd/MM/yyyy")</i></p>
+            </div>
+        </div>
+        <hr>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div>
+                    <strong>Nombre:</strong> @Model.reciboSocioData.socioNombre @Model.reciboSocioData.socioApellido
+                </div>
+                <div><strong>Documento:</strong> @Model.reciboSocioData.socioDocumento</div>
+                <div><strong>Dirección:</strong> @Model.reciboSocioData.socioDireccion</div>
+            </div>
+        </div>
+        <div class="table-responsive-sm">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th class="right">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.reciboDetalle.Count(); i++)
+                    {
+                        <tr>
+                            <td class="left strong">CUOTA @Model.reciboDetalle[i].detalleCategoria.ToUpper() @Model.reciboDetalle[i].detallePeriodo.ToString("MMMM yyyy").ToUpper() — @Model.reciboDetalle[i].detalleSocio.ToUpper()</td>
+                            <td class="right">@String.Format("{0:0.00}", @Model.reciboDetalle[i].detalleMonto)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="left">
+                            <strong>TOTAL</strong>
+                        </td>
+                        <td class="right">
+                            <strong>@String.Format("{0:0.00}", @Model.reciboMonto)</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>

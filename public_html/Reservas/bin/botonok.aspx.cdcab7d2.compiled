@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/BotonOK.aspx" hash="25cc926cb" filehash="d71b97039818006b" flags="110000" assembly="canchas" type="ASP.botonok_aspx">
+  <filedeps>
+    <filedep name="/Paddle/BotonOK.aspx" />
+    <filedep name="/Paddle/BotonOK.aspx.vb" />
+    <filedep name="/Paddle/Default.master" />
+    <filedep name="/Paddle/Default.master.vb" />
+  </filedeps>
+</preserve>

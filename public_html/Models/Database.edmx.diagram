@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bbfb43457bad45608f742d2b152aed81" Name="Diagram1" ZoomLevel="14">
+        <EntityTypeShape EntityType="webCentenarioModel.actividadData" Width="1.5" PointX="10.5" PointY="24.375" />
+        <EntityTypeShape EntityType="webCentenarioModel.actividadIntegranteData" Width="1.5" PointX="12.75" PointY="28.25" />
+        <EntityTypeShape EntityType="webCentenarioModel.auditoriaTurnos" Width="1.5" PointX="17.25" PointY="25.5" />
+        <EntityTypeShape EntityType="webCentenarioModel.canchasData" Width="1.5" PointX="12.75" PointY="36" />
+        <EntityTypeShape EntityType="webCentenarioModel.categoriaPostData" Width="1.5" PointX="11.25" PointY="14" />
+        <EntityTypeShape EntityType="webCentenarioModel.categoriaSocioData" Width="1.5" PointX="0.75" PointY="17.5" />
+        <EntityTypeShape EntityType="webCentenarioModel.causaBajaData" Width="1.5" PointX="0.75" PointY="27.875" />
+        <EntityTypeShape EntityType="webCentenarioModel.cuotaActividadData" Width="1.5" PointX="12.75" PointY="23" />
+        <EntityTypeShape EntityType="webCentenarioModel.cuotaEstadoData" Width="1.5" PointX="3.75" PointY="10.25" />
+        <EntityTypeShape EntityType="webCentenarioModel.cuotaSocioData" Width="1.5" PointX="6" PointY="17" />
+        <EntityTypeShape EntityType="webCentenarioModel.formaPagoData" Width="1.5" PointX="3.75" PointY="30.625" />
+        <EntityTypeShape EntityType="webCentenarioModel.grupoFamiliarData" Width="1.5" PointX="5.25" PointY="24.875" />
+        <EntityTypeShape EntityType="webCentenarioModel.grupoFamiliarIntegranteData" Width="1.5" PointX="7.5" PointY="22.375" />
+        <EntityTypeShape EntityType="webCentenarioModel.grupoFamiliarParentescoData" Width="1.5" PointX="5.25" PointY="33.625" />
+        <EntityTypeShape EntityType="webCentenarioModel.horariosTurnos" Width="1.5" PointX="15" PointY="36.125" />
+        <EntityTypeShape EntityType="webCentenarioModel.jugadoresData" Width="1.5" PointX="15" PointY="28" />
+        <EntityTypeShape EntityType="webCentenarioModel.locData" Width="1.5" PointX="0.75" PointY="22.125" />
+        <EntityTypeShape EntityType="webCentenarioModel.postData" Width="1.5" PointX="13.5" PointY="17.625" />
+        <EntityTypeShape EntityType="webCentenarioModel.precioTurnos" Width="1.5" PointX="17.25" PointY="30.875" />
+        <EntityTypeShape EntityType="webCentenarioModel.provData" Width="1.5" PointX="1.5" PointY="25.25" />
+        <EntityTypeShape EntityType="webCentenarioModel.reciboData" Width="1.5" PointX="5.25" PointY="13.5" />
+        <EntityTypeShape EntityType="webCentenarioModel.resEstadoPago" Width="1.5" PointX="15" PointY="25.625" />
+        <EntityTypeShape EntityType="webCentenarioModel.sexoData" Width="1.5" PointX="0.75" PointY="14.375" />
+        <EntityTypeShape EntityType="webCentenarioModel.sistemaAccionData" Width="1.5" PointX="8.25" PointY="14" />
+        <EntityTypeShape EntityType="webCentenarioModel.sistemaAuditoriaData" Width="1.5" PointX="10.5" PointY="17.625" />
+        <EntityTypeShape EntityType="webCentenarioModel.sistemaModuloData" Width="1.5" PointX="8.25" PointY="26.375" />
+        <EntityTypeShape EntityType="webCentenarioModel.socioData" Width="1.5" PointX="3" PointY="15.875" />
+        <EntityTypeShape EntityType="webCentenarioModel.tipoDocumentoData" Width="1.5" PointX="0.75" PointY="11.75" />
+        <EntityTypeShape EntityType="webCentenarioModel.usuarioData" Width="1.5" PointX="8.25" PointY="17" />
+        <EntityTypeShape EntityType="webCentenarioModel.usuarioRolData" Width="1.5" PointX="6" PointY="10.125" />
+        <EntityTypeShape EntityType="webCentenarioModel.zonaCobroData" Width="1.5" PointX="3.75" PointY="27.875" />
+        <AssociationConnector Association="webCentenarioModel.FK_actividadData_usuarioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_actividadIntegranteData_actividadData" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_actividadData" />
+        <AssociationConnector Association="webCentenarioModel.FK_canchasData_actividadData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaActividadData_actividadData" />
+        <AssociationConnector Association="webCentenarioModel.FK_precioTurnos_actividadData" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_canchasData" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_formaPagoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_horariosTurnos" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_jugadoresData" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_precioTurnos" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_resEstadoPago" />
+        <AssociationConnector Association="webCentenarioModel.FK_auditoriaTurnos_usuarioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_horariosTurnos_canchasData" />
+        <AssociationConnector Association="webCentenarioModel.FK_precioTurnos_canchasData" />
+        <AssociationConnector Association="webCentenarioModel.FK_postData_categoriaPost" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaSocioData_categoriaSocioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_categoriaSocio" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_causaBajaData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaActividadData_cuotaEstadoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaActividadData_formaPagoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaSocioData_cuotaEstadoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaSocioData_formaPagoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_cuotaSocioData_zonaCobroData" />
+        <AssociationConnector Association="webCentenarioModel.FK_grupoFamiliarData_socioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_integranteGrupoFamiliarData_grupoFamiliarData" />
+        <AssociationConnector Association="webCentenarioModel.FK_grupoFamiliarIntegranteData_socioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_integranteGrupoFamiliarData_socioParentescoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_precioTurnos_horariosTurnos" />
+        <AssociationConnector Association="webCentenarioModel.FK_locData_provData1" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_locData" />
+        <AssociationConnector Association="webCentenarioModel.FK_postData_usuarioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_reciboData_socioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_sexoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_sistemaAuditoriaData_sistemaAccionData" />
+        <AssociationConnector Association="webCentenarioModel.FK_sistemaAuditoriaData_sistemaModuloData" />
+        <AssociationConnector Association="webCentenarioModel.FK_sistemaAuditoriaData_usuarioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_tipoDocumentoData" />
+        <AssociationConnector Association="webCentenarioModel.FK_socioData_zonaCobroData" />
+        <AssociationConnector Association="webCentenarioModel.FK_usuarioData_socioData" />
+        <AssociationConnector Association="webCentenarioModel.FK_usuarioData_rolData" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

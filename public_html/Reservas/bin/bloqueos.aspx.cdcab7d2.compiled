@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/Bloqueos.aspx" hash="25cc926cb" filehash="9593854a53867300" flags="110000" assembly="canchas" type="ASP.bloqueos_aspx">
+  <filedeps>
+    <filedep name="/Paddle/Bloqueos.aspx" />
+    <filedep name="/Paddle/Bloqueos.aspx.vb" />
+    <filedep name="/Paddle/Default.master" />
+    <filedep name="/Paddle/Default.master.vb" />
+  </filedeps>
+</preserve>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/Default.master" hash="25cc926cb" filehash="682293c09dd60415" flags="110000" assembly="canchas" type="ASP.default_master">
+  <filedeps>
+    <filedep name="/Paddle/Default.master" />
+    <filedep name="/Paddle/Default.master.vb" />
+  </filedeps>
+</preserve>

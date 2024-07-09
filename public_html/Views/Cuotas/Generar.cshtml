@@ -1,0 +1,232 @@
+﻿@model webCentenario.Models.ViewModels.generarCuotaSocioViewModel
+
+@{
+    ViewBag.Title = "Generar cuotas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Generar cuotas</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col mb-3">
+        <div class="card mb-3">
+            <div class="card-body">
+                @using (Html.BeginForm("Generar", "Cuotas"))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selCategoria, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selCategoria, Model.catsList, "(Seleccionar categoría)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selCategoria, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, new SelectList("", "", ""), "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.csFechaPeriodo, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.csFechaPeriodo, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.csFechaPeriodo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.csFechaVencimiento, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.csFechaVencimiento, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.csFechaVencimiento, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Generar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header"><h5>Auditoría de generación de cuotas</h5></div>
+            <div class="card-body">
+                <table id="tablaAuditoria" class="table table-hover table-bordered table-responsive-md"></table>
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h5>Información</h5></div>
+            <div class="card-body">
+                <p>
+                    La <b>generación de cuotas societarias</b> se realiza mes a mes y por categoría. Habitualmente la generación de cuotas abarcará todos los socios (<i>que pertenezcan a la categoría seleccionada</i>), en ese caso, utilizaremos la opción por defecto -Todos los socios-.
+                    Si deseara generar cuotas para un socio en particular, deberá seleccionarlo en -Generar para-.
+                    <br><br>El sistema identificará (<i>en base al período</i>) si ya existen cuotas con el mismo criterio, por lo tanto; no habrá cuotas repetidas.
+                    Además, cada vez que se van a generar cuotas, el sistema chequeará si hay que actualizar categorías societarias. Por eso, <b>es importante</b> siempre que generemos cuotas, seleccionar primero aquellas categorías que tienen límite de edad y categoría siguiente; es decir, que puede ser actualizadas.
+                    Esto nos permitirá ingresar al socio a su nueva categoría antes de generar sus cuotas.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#btnSubmit").html('Generar');
+            $("#btnSubmit").prop("disabled", false);
+            $('#infoModal').modal('show');
+
+            $("#selCategoria").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar categoría)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $("#selSocio").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar socio)',
+                width: 'auto'
+            });
+
+            var opTodos = new Option("TODOS LOS SOCIOS", -1, true, true);
+            $(selSocio).append(opTodos).trigger('change');
+
+            $(selCategoria).change(function () {
+                ObtenerSocios();
+            });
+
+            if ($(selCategoria).val() != null) {
+                ObtenerSocios();
+            }
+
+            function ObtenerSocios() {
+                $.ajax({
+                    type: "post",
+                    url: "/Cuotas/ObtenerSocios",
+                    data: { catid: $(selCategoria).val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selSocio).empty();
+                        $(selSocio).append(opTodos).trigger('change');
+                        $.each(data, function (index, row) {
+                            $(selSocio).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                    }
+                });
+            }
+
+            $('form').submit(function () {
+                $("#btnSubmit").prop("disabled", true);
+                $("#btnSubmit").html('<i class="fa fa-spinner fa-spin"></i> Generando...');
+            });
+
+            $("#tablaAuditoria").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                select: {
+                    style: 'os',
+                    items: 'cell'
+                },
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['30%', '40%', '30%'];
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100],
+                    ['10 filas', '25 filas', '50 filas', '100 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Cuotas/CargarAuditoriaGeneracion",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    {
+                        "data": "auditFecha", "title": "Fecha", "name": "auditFecha", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                        }, "width": "15%"
+                    },
+                    { "data": "auditUsuario", "title": "Responsable", "name": "auditUsuario", "width": "20%" },
+                    { "data": "auditDetalle", "title": "Detalle", "name": "auditDetalle", "width": "65%" },
+                ]
+            });
+        });
+    </script>
+}

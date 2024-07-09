@@ -1,0 +1,156 @@
+﻿@model webCentenario.Models.ViewModels.cobrarCuotaActividadViewModel
+
+@{
+    ViewBag.Title = "Cobranza de actividades";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Cobranza de actividades</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    @if (ViewBag.ReciboID != null)
+                    {
+                        @Html.ActionLink("Ver recibo", "Recibo", "Cuotas", new { id = ViewBag.ReciboID }, new { @class = "btn btn-sm btn-primary", @target = "_blank" })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Cobrar", "Actividades"))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selActividad, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selActividad, Model.actsList, "(Seleccionar actividad)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selActividad, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, new SelectList(""), "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.caFechaPago, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.caFechaPago, new { htmlAttributes = new { @class = "form-control", type = "date", @Value = System.DateTime.Now.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.caFechaPago, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selFormaPago, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selFormaPago, Model.formaPagoList, "(Seleccionar forma de pago)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selFormaPago, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.selCuota, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selCuota, new SelectList(""), "(Seleccionar cuota(s))", new { @class = "form-control", @multiple = "multiple" })
+                            @Html.ValidationMessageFor(model => model.selCuota, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.caObservaciones, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextAreaFor(model => model.caObservaciones, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.caObservaciones, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            <button type="submit" value="Cobrar" class="btn btn-primary">Cobrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+
+            $("#selActividad").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar actividad)',
+                minimumResultsForSearch: -1
+            });
+
+            $("#selSocio").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar socio)'
+            });
+
+            $("#selFormaPago").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar forma de pago)',
+                minimumResultsForSearch: -1
+            });
+
+            $("#selCuota").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar cuota(s))'
+            });
+
+            $(selActividad).change(function () {
+                $.ajax({
+                    type: "post",
+                    url: "/Actividades/ObtenerSocios",
+                    data: { actid: $(selActividad).val(), accion: "integrantes" },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selSocio).empty();
+
+                        $.each(data, function (index, row) {
+                            $(selSocio).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                        $(selSocio).val(null);
+                        $(selSocio).trigger('change');
+                    }
+                });
+            });
+
+            $(selSocio).change(function () {
+                $.ajax({
+                    type: "post",
+                    url: "/Actividades/ObtenerCuotas",
+                    data: { id: $(selSocio).val()},
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selCuota).empty();
+
+                        $.each(data, function (index, row) {
+                            $(selCuota).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

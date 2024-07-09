@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/Informe.aspx" hash="25cc926cb" filehash="9ec96ff7b0098fb1" flags="110000" assembly="canchas" type="ASP.informe_aspx">
+  <filedeps>
+    <filedep name="/Paddle/Default.master" />
+    <filedep name="/Paddle/Default.master.vb" />
+    <filedep name="/Paddle/Informe.aspx" />
+    <filedep name="/Paddle/Informe.aspx.vb" />
+  </filedeps>
+</preserve>

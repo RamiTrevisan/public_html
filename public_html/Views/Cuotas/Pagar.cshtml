@@ -1,0 +1,70 @@
+﻿@model webCentenario.Models.ViewModels.pagosViewModel
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Revisión";
+    int total = 0;
+}
+
+<h3>Vas a pagar...</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-primary" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<div class="row">
+    <div class="col mb-3">
+        <div class="table-responsive-sm">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th class="right">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ProductosView.Count(); i++)
+                    {
+                        total += (Model.MontosView[i]);
+                        <tr>
+                            <td class="left strong">@Model.ProductosView[i].ToUpper()</td>
+                            <td class="right">@String.Format("{0:0.00}", @Model.MontosView[i])</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="left">
+                            <strong>TOTAL</strong>
+                        </td>
+                        <td class="right">
+                            <strong>@String.Format("{0:0.00}", @total)</strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @action = "https://botonpp.asjservicios.com.ar/" }))
+            {
+                @Html.HiddenFor(model => model.Hash, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.Comercio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.SucursalComercio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.TransaccionComercioId, new { htmlAttributes = new { @class = "form-control" } })
+                for (int i = 0; i < Model.Producto.Count(); i++)
+                {
+                    @Html.HiddenFor(model => model.Producto[i], new { htmlAttributes = new { @class = "form-control" } })
+                }
+                @Html.HiddenFor(model => model.Monto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.CallbackSuccess, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.CallbackCancel, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.Informacion, new { htmlAttributes = new { @class = "form-control" } })
+
+                @Html.ActionLink("Volver", "Deudas", "Cuotas", new { }, new { @class = "btn btn-secondary" })
+                <button type="submit" class="btn btn-primary">Proceder al pago</button>
+            }
+        </div>
+    </div>
+</div>

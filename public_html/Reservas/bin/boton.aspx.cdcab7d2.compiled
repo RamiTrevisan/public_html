@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="3" virtualPath="/Paddle/Boton.aspx" hash="25cc926cb" filehash="4b1160efb00894c4" flags="110000" assembly="canchas" type="ASP.boton_aspx">
+  <filedeps>
+    <filedep name="/Paddle/Boton.aspx" />
+    <filedep name="/Paddle/Boton.aspx.vb" />
+  </filedeps>
+</preserve>

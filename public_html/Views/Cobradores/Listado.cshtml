@@ -1,0 +1,205 @@
+﻿@{
+    ViewBag.Title = "Listado de cobradores";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Listado de cobradores -->
+<div class="card">
+    <div class="card-header"><h3>Administrar cobradores</h3></div>
+    <div class="card-body">
+        <table id="tblCobradores" class="table table-hover table-bordered table-responsive-md"></table>
+    </div>
+</div>
+
+<!-- Modal Info -->
+<div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal eliminar cobrador -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar cobrador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que quieres eliminar a este cobrador?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Eliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para eliminar al cobrador. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="cbrID" hidden />
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $("#tblCobradores").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                select: {
+                    style: 'os',
+                    items: 'cell'
+                },
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary text-center',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['10%', '60%', '30%'];
+                            }
+                        },
+
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Cobradores/ListarCobradores",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "Id", "title": "#", "name": "Id", "width": "10%", "className": "text-center" },
+                    { "data": "Nombre", "title": "Cobrador", "name": "zcCobrador", "width": "40%" },
+                    { "data": "Descripcion", "title": "Descripcion", "name": "zcDescripcion", "width": "40%" },
+                    {
+                        data: null, render: function(data, type, row) {
+                                return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-danger" onclick="Confirmar(' + row.Id + ')">Eliminar cobrador</a></div>';
+                            }, "width": "10%", "title": "Acciones", "className": "text-center"
+                    }
+                ]
+            });
+        });
+
+        function Confirmar(Id) {
+
+            $("#cbrID").val(Id);
+            $('#deleteModal .modal-body').html("Vas a eliminar el socio seleccionado (#" + Id + "), ¿está seguro?");
+            $("#deleteModal").modal('show');
+        }
+
+        function Eliminar() {
+
+            var Id = $("#cbrID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "@Url.Action("Eliminar", "Cobradores")",
+                data: { id: Id },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#deleteModal").modal("hide");
+                        $('#infoModal .modal-body').html(data.message);
+                        $("#infoModal").modal('show');
+
+                        tabla = $('#tblCobradores').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $("#deleteModal").modal("hide");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $("#deleteModal").modal("hide");
+                    $("#errorModal").modal('show');
+                }
+            })
+        }
+    </script>
+}
+

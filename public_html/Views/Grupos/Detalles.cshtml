@@ -1,0 +1,259 @@
+﻿@model webCentenario.Models.ViewModels.grupoFamiliarViewModel
+@using webCentenario.Helpers
+
+@{
+    ViewBag.Title = "Grupo familiar";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Grupo familiar de <b>@Model.gfSocioPrincipal (#@Model.gfSocioID)</b></h3>
+<br />
+
+@if (TempData["Info"] != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(TempData["Info"])
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col">
+        @if (Model.gfObservacion != null)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><h5>Observaciones</h5></div>
+                <div class="card-body">
+                    <h5>@Model.gfObservacion</h5>
+                </div>
+            </div>
+        }
+        <div class="card mb-3">
+            <div class="card-header"><h5>Integrantes</h5></div>
+            <div class="card-body">
+                <table id="tablaIntegrantes" class="table table-hover table-bordered table-responsive-md"></table>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header"><h5>Cuotas adeudadas</h5></div>
+            <div class="card-body">
+                <table id="tablaCuotas" class="table table-hover table-bordered table-responsive-md"></table>
+            </div>
+        </div>
+        @if (Html.ItsAuthorized("Secretaria", "Administrador") == true)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><h5>Historial de pagos</h5></div>
+                <div class="card-body">
+                    <table id="tablaHistorial" class="table table-hover table-bordered table-responsive-md"></table>
+                </div>
+            </div>
+        }
+
+        @Html.ActionLink("Volver", "Listado", "Grupos", new { }, new { @class = "btn btn-secondary" })
+        @if (Html.ItsAuthorized("Secretaria", "Administrador") == true)
+        {
+            @Html.ActionLink("Modificar integrantes", "Integrantes", "Grupos", new { id = Model.gfID }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Modificar grupo", "Modificar", "Grupos", new { id = Model.gfID }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Eliminar", null, "Grupos", new { id = Model.gfID }, new { @class = "btn btn-danger" })
+        }
+    </div>
+</div>
+
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+
+            $("#tablaIntegrantes").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "info": false,
+                "lengthChange": false,
+                "pageLength": 10,
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "ajax": {
+                    "url": "/Grupos/CargarIntegrantes",
+                    "type": "POST",
+                    "data": { "id": '@Model.gfID' },
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "igfIntegranteID", "title": "#", "name": "igfIntegranteID", "width": "6%", "className": "text-center" },
+                    { "data": "igfNombre", "title": "Socio", "name": "igfNombre", "width": "21%" },
+                    { "data": "igfCategoria", "title": "Categoría", "name": "igfCategoria", "width": "21%" },
+                    { "data": "igfNumDoc", "title": "N° Documento", "name": "igfNumDoc", "width": "21%" },
+                    { "data": "igfParentesco", "title": "Parentesco", "name": "igfParentesco", "width": "21%" },
+                ]
+            });
+
+            $("#tablaCuotas").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "info": false,
+                "lengthChange": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "ajax": {
+                    "url": "/Grupos/CargarDeudas",
+                    "type": "POST",
+                    "data": { "id": '@Model.gfID' },
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "csID", "title": "#", "name": "csID", "width": "5%", "className": "text-center" },
+                    { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "19%" },
+                    { "data": "csCategoriaNombre", "title": "Categoría", "name": "csCategoriaNombre", "width": "19%" },
+                    {
+                        "data": "csFechaPeriodo", "title": "Período", "name": "csFechaPeriodo", "render": function (data) {
+                            return moment(data).format('MMMM YYYY');
+                        }, "width": "19%"
+                    },
+                    {
+                        "data": "csFechaVencimiento", "title": "Vencimiento", "name": "csFechaVencimiento", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }, "width": "19%"
+                    },
+                    { "data": "csMonto", "title": "Monto", "name": "csMonto", "width": "19%" }
+                ]
+            });
+
+            $("#tablaHistorial").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "info": false,
+                "lengthChange": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "ajax": {
+                    "url": "/Grupos/CargarHistorial",
+                    "type": "POST",
+                    "data": { "id": '@Model.gfID' },
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "csID", "title": "#", "name": "csID", "width": "5%", "className": "text-center" },
+                    { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "19%" },
+                    { "data": "csCategoriaNombre", "title": "Categoría", "name": "csCategoriaNombre", "width": "19%" },
+                    {
+                        "data": "csFechaPeriodo", "title": "Período", "name": "csFechaPeriodo", "render": function (data) {
+                            return moment(data).format('MMMM YYYY');
+                        }, "width": "19%"
+                    },
+                    {
+                        "data": "csFechaPago", "title": "Fecha de pago", "name": "csFechaPago", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                        }, "width": "19%"
+                    },
+                    { "data": "csMonto", "title": "Monto", "name": "csMonto", "width": "19%" }
+                ]
+            });
+        });
+    </script>
+}

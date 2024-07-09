@@ -1,0 +1,32 @@
+﻿@model webCentenario.Models.ViewModels.usuarioViewModel
+@{
+    ViewBag.Title = "Acceso";
+}
+
+<link href="~/Content/css/login.css" rel="stylesheet" type="text/css" />
+
+<div class="form-signin-body">
+    <div class="form-signin text-center">
+        @using (Html.BeginForm("Acceso", "Usuarios", FormMethod.Post, new { autocomplete = "on" }))
+        {
+            @Html.AntiForgeryToken()
+            <h1 class="h3 mb-3 fw-normal">Acceso usuarios</h1>
+            <div class="list-group ms-auto">
+                @Html.ValidationMessage("LoginError", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(m => m.userEmail, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(m => m.userContraseña, "", new { @class = "text-danger mb-4" })
+            </div>
+            @Html.TextBoxFor(m => m.userEmail, new { @class = "form-control input-email", @placeholder = "Correo electrónico", autocomplete = "on" })
+            @Html.PasswordFor(m => m.userContraseña, new { @class = "form-control input-password", @placeholder = "Contraseña", autocomplete = "on" })
+            @*
+            <div class="checkbox mb-3 mt-3">
+                @Html.CheckBoxFor(m => m.userRecordar, "Recordarme")
+                @Html.LabelFor(m => m.userRecordar)
+            </div>
+            *@
+            <input type="submit" name="submit" class="btn btn-primary btn-block" value="Acceder" />
+            <a href="@Url.Action("Registro", "Usuarios")" class="btn btn-link btn-block">Nuevo usuario</a>
+        }
+        <p class="mt-5 mb-3 text-muted">Nunca compartas tu información con otras personas.</p>
+    </div>
+</div>

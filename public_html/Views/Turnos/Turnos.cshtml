@@ -1,0 +1,53 @@
+﻿@model webCentenario.Models.ViewModels.turnosViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Información de reserva";
+}
+@Styles.Render("~/bundles/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Turnos</title>
+    <link href="~/Content/css/pdf.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+
+        <!-- Banner -->
+        <img src="~/Content/images/banner.png" />
+
+        <div class="card mb-3">
+            <div class="card-header"><h3>Información de la reserva</h3></div>
+            <div class="card-body d-flex justify-content-start align-items-start flex-column">
+                <p class="text-danger"><b>ATENCIÓN:</b> Imprima o saque captura de pantalla y presentelo a la hora de abonar la reserva.</p>
+                <br />
+                <p><b>Dirección: </b>Ruta 92 y Fanfarria Alto Perú, San José de la Esquina, Argentina.</p>
+                <p><b>Actividad: </b>@ViewBag.Actividad</p>
+                <p><b>Cancha: </b>@ViewBag.Cancha</p>
+                <p><b>Fecha: </b>@ViewBag.Fecha</p>
+                <p><b>Horario: </b>@ViewBag.Hora</p>
+                <p><b>Jugadores: </b>@ViewBag.Jugadores</p>
+                <p><b>Precio: </b>$@ViewBag.Precio</p>
+                <p><b>Forma de pago: </b>@ViewBag.FdPago</p>
+
+                <!-- btnReservar -->
+                <div class="col-md-12 mt-3">
+                    @*<a href="#" class="btn btn-primary">Ir a pagar</a>*@
+                    <button onclick="window.print();" class="noPrint btn btn-primary">Imprimir</button>
+                    <a class="btn btn-secondary" href="@Url.Action("Inicio", "Sistema")">Volver</a>
+                </div>
+
+                   
+                </div>
+            </div>
+
+        <h1 class="display-1">@ViewBag.text</h1>
+
+    </div>
+</body>
+</html>

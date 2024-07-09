@@ -1,0 +1,69 @@
+ASP.reservas_aspx 10:24:26
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 10:48:44
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 10:49:47
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:13:17
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 11:15:13
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:43:26
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 11:44:21
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 12:36:01
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 12:43:13
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 12:45:10
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.misreservas_aspx 12:49:13
+LoadDw - The parameterized query '(@IdSocio varchar(20),@IdActividad int)SELECT A.IdReserva, A.Fec' expects the parameter '@IdSocio', which was not supplied.
+
+ASP.misreservas_aspx 13:17:38
+LoadDw - The parameterized query '(@IdSocio varchar(20),@IdActividad int)SELECT A.IdReserva, A.Fec' expects the parameter '@IdSocio', which was not supplied.
+
+ASP.misreservas_aspx 13:25:02
+LoadDw - The parameterized query '(@IdActividad int)SELECT A.IdReserva, A.Fecha, A.Hora, A.IdCanch' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.misreservas_aspx 14:02:33
+LoadDw - The parameterized query '(@IdActividad int)SELECT A.IdReserva, A.Fecha, A.Hora, A.IdCanch' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.reservas_aspx 15:12:24
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 15:14:29
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 15:58:52
+Actualizacion - The parameterized query '(@Fecha bigint,@Hora bigint,@Cancha int,@IdActividad int)SELECT ' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.reservas_aspx 17:25:16
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 19:10:38
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 19:52:20
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 19:54:47
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.misreservas_aspx 19:55:15
+LoadDw - The parameterized query '(@IdActividad int)SELECT A.IdReserva, A.Fecha, A.Hora, A.IdCanch' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.reservas_aspx 21:03:33
+btnGuardar_ServerClick - Thread was being aborted.
+

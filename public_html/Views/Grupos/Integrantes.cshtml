@@ -1,0 +1,213 @@
+﻿@model webCentenario.Models.ViewModels.grupoFamiliarViewModel
+@{
+    ViewBag.Title = "Crear grupo familiar";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Modificar integrantes</h3>
+<br />
+
+<div class="row">
+    <div class="col">
+        @using (Html.BeginForm("Integrantes", "Grupos", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.gfID)
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selIntegrante, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selIntegrante, new SelectList("", "", ""), "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selIntegrante, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selParentesco, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selParentesco, Model.parentescoList, "(Seleccionar parentesco)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selParentesco, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" id="btn" name="btn" class="btn btn-primary">Agregar integrante</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="card mb-3">
+            <div class="card-header"><h5>Integrantes</h5></div>
+            <div class="card-body">
+                <table id="tablaIntegrantes" class="table table-hover table-bordered table-responsive-md"></table>
+            </div>
+        </div>
+        @Html.ActionLink("Volver", "Listado", "Grupos", new { }, new { @class = "btn btn-secondary" })
+        @Html.ActionLink("Detalles", "Detalles", "Grupos", new { id = Model.gfID }, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar integrante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que quieres eliminar este integrante?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Eliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para eliminar el integrante. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="igfID" hidden />
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#selIntegrante").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar socio)',
+                width: 'auto'
+            });
+
+            $(selIntegrante).ready(function () {
+                listarSocios();
+            });
+
+            $("#selParentesco").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar parentesco)',
+                width: 'auto'
+            });
+
+            $("#tablaIntegrantes").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "info": false,
+                "lengthChange": false,
+                "pageLength": 25,
+
+                "ajax": {
+                    "url": "/Grupos/CargarIntegrantes",
+                    "type": "POST",
+                    "data": { "id": '@Model.gfID' },
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false
+                    }
+                ],
+
+                "columns": [
+                    { "data": "igfID", "title": "", "name": "igfID" },
+                    { "data": "igfIntegranteID", "title": "#", "name": "igfIntegranteID", "width": "5%", "className": "text-center" },
+                    { "data": "igfNombre", "title": "Socio", "name": "igfNombre", "width": "20%" },
+                    { "data": "igfCategoria", "title": "Categoría", "name": "igfCategoria", "width": "20%" },
+                    { "data": "igfNumDoc", "title": "N° Documento", "name": "igfNumDoc", "width": "20%" },
+                    { "data": "igfParentesco", "title": "Parentesco", "name": "igfParentesco", "width": "20%" },
+                    //{ "data": "igfEstado", "title": "Estado", "name": "igfEstado", "width": "10%" },
+                    {
+                        data: null, render: function (data, type, row) {
+                            return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-danger" onclick="Confirmar(' + row.igfID + ')">Eliminar</a></div>';
+                        }, "width": "5%", "className": "text-center"
+                    }
+                ]
+            });
+        });
+
+        function Confirmar(igfID) {
+            $("#igfID").val(igfID);
+            $("#deleteModal").modal('show');
+        }
+
+        function Eliminar() {
+
+            var igfID = $("#igfID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "@Url.Action("EliminarIntegrante", "Grupos")",
+                data: { id: igfID },
+                success: function (data) {
+                    if (data == true) {
+                        $("#deleteModal").modal("hide");
+
+                        listarSocios();
+                        tabla = $('#tablaIntegrantes').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $("#deleteModal").modal("hide");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $("#deleteModal").modal("hide");
+                    $("#errorModal").modal('show');
+                }
+            });
+        }
+
+        function listarSocios() {
+            $.ajax({
+                type: "post",
+                url: "/Grupos/ObtenerSocios",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $.each(data, function (index, row) {
+                        $(selIntegrante).append($("<option value></option>").val(row.Value).html(row.Text));
+                    });
+                }
+            });
+        }
+    </script>
+}

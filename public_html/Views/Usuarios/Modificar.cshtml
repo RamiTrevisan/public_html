@@ -1,0 +1,74 @@
+﻿@model webCentenario.Models.ViewModels.usuarioViewModel
+@{
+    ViewBag.Title = "Modificar usuario";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Modificar usuario</h3>
+<br />
+
+@using (Html.BeginForm("Modificar", "Usuarios", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row g-3">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.userID)
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userEmail, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextBoxFor(model => model.userEmail, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userEmail, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userContraseña, htmlAttributes: new { @class = "form-label" })
+                            @Html.PasswordFor(model => model.userContraseña, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userContraseña, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, Model.sociosList, "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selRol, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selRol, Model.rolesList, "(Seleccionar rol)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selRol, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            @Html.ActionLink("Volver", "Listado", "Usuarios", new { }, new { @class = "btn btn-secondary" })
+                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var userSocio = new Option("@Model.userSocioNombre", @Model.selSocio, true, true);
+            $(selSocio).append(userSocio).trigger('change');
+
+            $("#selSocio").select2({
+            theme: "bootstrap",
+                placeholder: '(Seleccionar socio)',
+                width: 'auto'
+            });
+
+            $("#selRol").select2({
+            theme: "bootstrap",
+                placeholder: '(Seleccionar rol)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+        });
+    </script>
+}

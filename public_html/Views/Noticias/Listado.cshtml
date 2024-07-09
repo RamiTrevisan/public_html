@@ -1,0 +1,145 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<webCentenario.Models.ViewModels.postViewModel>
+
+@{
+    ViewBag.Title = "Noticias";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Listado de noticias</h3>
+<br />
+
+@using (Html.BeginForm("BorrarMultiple", "Noticias", FormMethod.Post))
+{
+    @*<button type="submit" value="Borrar seleccionados" class="btn btn-sm btn-danger mb-2"><i class="fa fa-trash mr-1"></i> Borrar seleccionados</button>*@
+    <table class="table table-hover table-bordered table-responsive-md">
+        <tr>
+            <th>
+                Título
+            </th>
+            <th>
+                Autor
+            </th>
+            <th>
+                Fecha
+            </th>
+            <th class="d-none d-sm-table-cell">
+                Opciones
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="max-width:250px">
+                    @Html.DisplayFor(modelItem => item.postTitleTrimmed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.postAutor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.postFechaCreacion)
+                </td>
+                <td class="d-none d-sm-table-cell">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Acciones">
+                        @Html.ActionLink("Editar", "Editar", new { id = item.postID }, new { @class = "btn btn-secondary" })
+                        @Html.ActionLink("Leer", "Leer", new { id = item.postID }, new { @class = "btn btn-secondary" })
+                        <button type="button" class="btn btn-danger" onclick="Confirm(@item.postID)">Borrar</button>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Borrar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que quieres borrar esta noticia?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Borrar()">Borrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para borrar esta noticia. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="idNoticia" hidden />
+
+@if (Model.PageCount > 1)
+{
+    <div class="pagination">
+        @Html.PagedListPager(Model, pag => Url.Action("Listado", new { pag, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+         new PagedListRenderOptions
+         {
+             MaximumPageNumbersToDisplay = 5,
+             DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+         })
+    </div>
+}
+
+@section scripts{
+    <script>
+        function Confirm(idNoticia) {
+
+            $("#idNoticia").val(idNoticia);
+            $("#deleteModal").modal('show');
+        }
+
+        function Borrar() {
+
+            var idNoticia = $("#idNoticia").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "@Url.Action("Borrar","Noticias")",
+                data: { id: idNoticia },
+                success: function (result) {
+                    if (result == true) {
+                        $("#deleteModal").modal("hide");
+                        $("#row_" + idNoticia).remove();
+                    }
+                    else {
+                        $("#deleteModal").modal("hide");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $("#deleteModal").modal("hide");
+                    $("#errorModal").modal('show');
+                }
+            })
+        }
+    </script>
+}

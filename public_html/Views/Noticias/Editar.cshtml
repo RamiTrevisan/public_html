@@ -1,0 +1,58 @@
+﻿@model webCentenario.Models.ViewModels.postViewModel
+
+@{
+    ViewBag.Title = "Editar noticia";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<link href="~/Content/summernote/summernote-lite.css" rel="stylesheet">
+
+@using (Html.BeginForm("Editar", "Noticias"))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.postID)
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @ViewBag.Message
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            @Html.LabelFor(model => model.postTitulo, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.postTitulo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.postTitulo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            @Html.LabelFor(model => model.selCat, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selCat, Model.catList, "(Seleccionar categoría)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selCat, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.postContenido, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextAreaFor(model => model.postContenido, new { @class = "form-control", @row = 5 })
+                        @Html.ValidationMessageFor(model => model.postContenido, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div>
+                        @Html.ActionLink("Volver", "Listado", "Noticias", new { }, new { @class = "btn btn-secondary" })
+                        <button type="submit" value="Guardar" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script src="~/Content/summernote/summernote-lite.js"></script>
+    <script src="~/Content/summernote/lang/summernote-es-ES.js"></script>
+    <script src="~/Content/js/text-editor.js"></script>
+}

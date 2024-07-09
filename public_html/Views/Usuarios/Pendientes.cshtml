@@ -1,0 +1,216 @@
+﻿@model List<webCentenario.Models.ViewModels.usuarioViewModel>
+
+@{
+    ViewBag.Title = "Usuarios pendientes";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Listado de usuarios pendientes de activación</h3>
+<br />
+
+<table id="tablaPendientes" class="table table-hover table-bordered table-responsive-md"></table>
+
+<div class="modal fade" id="aConfirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Aprobar?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-success" onclick="Aprobar()">Aprobar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rConfirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Rechazar?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Rechazar()">Rechazar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Algo no salió bien...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="userID" hidden />
+
+@section scripts{
+    <script>
+        function aConfirmar(userID) {
+
+            $("#userID").val(userID);
+            $('#aConfirmModal .modal-body').html("Vas a <b>APROBAR</b> el registro del usuario seleccionado, ¿está seguro?");
+            $("#aConfirmModal").modal('show');
+        }
+
+        function Aprobar() {
+
+            var userID = $("#userID").val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Aprobar", "Usuarios")",
+                data: { id: userID },
+                success: function (result) {
+                    if (result == true) {
+                        $("#aConfirmModal").modal('hide');
+                        tabla = $('#tablaPendientes').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información del usuario seleccionado. Si el error persiste, comunicate con el desarrollador.");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información del usuario seleccionado. Si el error persiste, comunicate con el desarrollador.");
+                    $("#errorModal").modal('show');
+                }
+            });
+        }
+
+        function rConfirmar(userID) {
+
+            $("#userID").val(userID);
+            $('#rConfirmModal .modal-body').html("Vas a <b>RECHAZAR</b> el registro del usuario seleccionado, ¿está seguro?");
+            $("#rConfirmModal").modal('show');
+        }
+
+        function Rechazar() {
+
+            var userID = $("#userID").val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Rechazar", "Usuarios")",
+                data: { id: userID },
+                success: function (result) {
+                    if (result == true) {
+                        $("#rConfirmModal").modal('hide');
+                        tabla = $('#tablaPendientes').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información del usuario seleccionado. Si el error persiste, comunicate con el desarrollador.");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function () {
+                    $('#errorModal .modal-body').html("Tuvimos un problema para actualizar la información del usuario seleccionado. Si el error persiste, comunicate con el desarrollador.");
+                    $("#errorModal").modal('show');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#tablaPendientes").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['10%', '30%', '30%', '30%'];
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Usuarios/CargarPendientes",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "userID", "title": "#", "name": "userID", "width": "4%" },
+                    { "data": "userSocioNombre", "title": "Socio", "name": "userSocioNombre", "width": "16%" },
+                    { "data": "userSocioDocumento", "title": "Documento", "name": "userSocioDocumento", "width": "16%" },
+                    { "data": "userEmail", "title": "Correo electrónico", "name": "userEmail", "width": "16%" },
+                    {
+                        data: null, render: function (data, type, row) {
+                            return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-success" onclick="aConfirmar(' + row.userID + ')">Aprobar</a><a class="btn bt-sm btn-danger" onclick="rConfirmar(' + row.userID + ')">Rechazar</a></div>';
+                        }, "width": "5%", "className": "text-center"
+                    }
+                ]
+            });
+        });
+    </script>
+}

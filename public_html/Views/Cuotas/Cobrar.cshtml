@@ -1,0 +1,220 @@
+﻿@model webCentenario.Models.ViewModels.cobrarCuotaSocioViewModel
+@using webCentenario.Helpers
+@{
+    ViewBag.Title = "Cobranza de cuotas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Cobranza de cuotas</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    @if (ViewBag.ReciboID != null && Html.ItsAuthorized("Secretaria", "Administrador") == true)
+                    {
+                        @Html.ActionLink("Ver recibo", "Recibo", "Cuotas", new { id = ViewBag.ReciboID }, new { @class = "btn btn-sm btn-primary", @target = "_blank" })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Cobrar", "Cuotas"))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, Model.sociosList, "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.csFechaPago, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.csFechaPago, new { htmlAttributes = new { @class = "form-control", type = "date", @Value = System.DateTime.Now.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.csFechaPago, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selZonaCob, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selZonaCob, Model.zonaCobList, "(Seleccionar zona de cobro)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selZonaCob, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selFormaPago, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selFormaPago, Model.formaPagoList, "(Seleccionar forma de pago)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selFormaPago, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.selCuota, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selCuota, new SelectList(""), "(Seleccionar cuota(s))", new { @class = "form-control", @multiple = "multiple" })
+                            @Html.ValidationMessageFor(model => model.selCuota, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.csObservaciones, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextAreaFor(model => model.csObservaciones, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.csObservaciones, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            <button type="submit" value="Cobrar" class="btn btn-primary">Cobrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (Html.ItsAuthorized("Secretaria", "Administrador") == true)
+            {
+                <div class="card mt-3">
+                    <div class="card-header"><h5>Auditoría de cobros</h5></div>
+                    <div class="card-body">
+                        <table id="tablaAuditoria" class="table table-hover table-bordered table-responsive-md"></table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+
+            $("#selSocio").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar socio)'
+            });
+
+            $("#selCuota").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar cuota(s))'
+            });
+
+            $("#selFormaPago").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar forma de pago)',
+                minimumResultsForSearch: -1
+            });
+
+            $("#selZonaCob").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar zona de cobro)',
+                minimumResultsForSearch: -1
+            });
+
+            $(selSocio).change(function () {
+                $.ajax({
+                    type: "post",
+                    url: "/Cuotas/ObtenerCuotas",
+                    data: { id: $(selSocio).val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selCuota).empty();
+
+                        $.each(data, function (index, row) {
+                            $(selCuota).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                    }
+                });
+            });
+
+            // // capturar el evento change del DropDownListFor
+            // $('#selCuota').on('change', function () {
+            //     var selected = $(this).val(); // obtener el valor seleccionado
+            //     $(this).find('option[value="' + selected + '"]').prop('disabled', true); // deshabilitar la opción seleccionada
+            // });
+
+            // // capturar el evento select2:unselecting para habilitar la opción deseleccionada en el DropDownListFor
+            // $("#selCuota").on("select2:unselecting", function (event) {
+            //     const removedOptionValue = event.params.args.data.id; //obtener el valor de la opción eliminada
+            //     $(this).find("option[value='" + removedOptionValue + "']").prop("disabled", false); //habilitar la opción en el DropDownListFor
+            // });
+
+
+            $("#tablaAuditoria").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                select: {
+                    style: 'os',
+                    items: 'cell'
+                },
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100],
+                    ['10 filas', '25 filas', '50 filas', '100 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Cuotas/CargarAuditoriaCobros",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    {
+                        "data": "auditFecha", "title": "Fecha", "name": "auditFecha", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                        }, "width": "15%"
+                    },
+                    { "data": "auditUsuario", "title": "Responsable", "name": "auditUsuario", "width": "20%" },
+                    { "data": "auditDetalle", "title": "Detalle", "name": "auditDetalle", "width": "65%" },
+                ]
+            });
+        });
+    </script>
+}
+

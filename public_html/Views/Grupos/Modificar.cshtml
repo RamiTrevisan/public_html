@@ -1,0 +1,48 @@
+﻿@model webCentenario.Models.ViewModels.grupoFamiliarViewModel
+@{
+    ViewBag.Title = "Modificar grupo familiar";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Modificar grupo familiar</h3>
+<br />
+
+@using (Html.BeginForm("Modificar", "Grupos", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row g-3">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.gfID)
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.selPrincipal, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selPrincipal, Model.sociosList, "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selPrincipal, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-8">
+                            @Html.LabelFor(model => model.gfObservacion, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextBoxFor(model => model.gfObservacion, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.gfObservacion, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col">
+                            @Html.ActionLink("Volver", "Listado", "Grupos", new { }, new { @class = "btn btn-secondary" })
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+    <script>
+        $("#selPrincipal").select2({
+            theme: "bootstrap",
+            placeholder: '(Seleccionar socio)',
+            width: 'auto'
+        });
+    </script>
+}

@@ -1,0 +1,129 @@
+ASP.reservas_aspx 09:44:29
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 09:45:32
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 10:18:27
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 10:55:43
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:25:17
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:34:28
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 11:36:16
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 11:36:48
+Actualizacion - The parameterized query '(@Fecha bigint,@Hora bigint,@Cancha int,@IdActividad int)SELECT ' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.botonok_aspx 11:40:11
+Actualizacion - The parameterized query '(@Fecha bigint,@Hora bigint,@Cancha int,@IdActividad int)SELECT ' expects the parameter '@IdActividad', which was not supplied.
+
+ASP.reservas_aspx 11:52:20
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:52:23
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:52:37
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:52:40
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:53:35
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.boton_aspx 11:53:35
+Boton_Load - Object reference not set to an instance of an object.
+
+ASP.reservas_aspx 11:54:21
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:54:44
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:54:46
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:54:56
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:54:56
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:04
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:04
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:06
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:06
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:07
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:08
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:21
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:26
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:26
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:27
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:27
+ActualizaReserva - Index was outside the bounds of the array.
+
+ASP.reservas_aspx 11:55:43
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:55:55
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 11:57:40
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 12:01:05
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 12:42:56
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 12:44:49
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 13:01:33
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 16:16:55
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 16:17:59
+btnSalir_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 18:25:34
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.reservas_aspx 20:10:08
+btnGuardar_ServerClick - Thread was being aborted.
+
+ASP.botonok_aspx 20:11:34
+btnSalir_ServerClick - Thread was being aborted.
+

@@ -1,0 +1,39 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<webCentenario.Models.ViewModels.postViewModel>
+@{
+    ViewBag.Title = "Panel de usuario";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="row row-cols-1">
+    @foreach (var post in Model)
+    {
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title" style="margin-bottom:-1px;">@post.postTitulo</h4>
+                    <small class="text-muted cat">
+                        <i class="far fa-calendar-alt text-primary"></i> @Html.DisplayFor(modelItem => post.postFechaCreacion)
+                    </small>
+                    <p class="card-text mt-2">@post.postContentTrimmed</p>
+                    <a href="@Url.Action("Leer", "Noticias", new { id = post.postID })" class="btn btn-sm btn-outline-primary stretched-link">Leer noticia</a>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+</div>
+@if (Model.PageCount > 1)
+{
+    <div class="pagination">
+        @Html.PagedListPager(Model, pag => Url.Action("Inicio", new { pag, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+         new PagedListRenderOptions
+         {
+             MaximumPageNumbersToDisplay = 10,
+             DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+             DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded
+         })
+    </div>
+}

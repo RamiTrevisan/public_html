@@ -1,0 +1,93 @@
+﻿@model webCentenario.Models.ViewModels.usuarioViewModel
+@{
+    ViewBag.Title = "Crear usuario";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Crear usuario</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¡Listo!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Crear", "Usuarios", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationMessage("customError", new { @class = "text-danger" })
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userEmail, htmlAttributes: new { @class = "form-label" })
+                            @Html.TextBoxFor(model => model.userEmail, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userEmail, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.userContraseña, htmlAttributes: new { @class = "form-label" })
+                            @Html.PasswordFor(model => model.userContraseña, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.userContraseña, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, Model.sociosList, "(Seleccionar socio)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selRol, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selRol, Model.rolesList, "(Seleccionar rol)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selRol, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            @Html.ActionLink("Volver", "Listado", "Usuarios", new { }, new { @class = "btn btn-secondary" })
+                            <input type="submit" value="Crear usuario" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#infoModal').modal('show');
+
+            $("#selSocio").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar socio)',
+                width: 'auto'
+            });
+
+            $("#selRol").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar rol)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+        });
+    </script>
+}

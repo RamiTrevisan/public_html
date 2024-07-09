@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Auditoría de categorías societarias";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Auditoría de categorías societarias</h3>
+<br />
+
+<table id="tablaAuditoria" class="table table-hover table-bordered table-responsive-md"></table>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tablaAuditoria").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                select: {
+                    style: 'os',
+                    items: 'cell'
+                },
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100],
+                    ['10 filas', '25 filas', '50 filas', '100 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Categorias/CargarAuditoria",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    {
+                        "data": "auditFecha", "title": "Fecha", "name": "auditFecha", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                            /*'DD/MM/YYYY, HH:mm:ss a'*/
+                        }, "width": "15%"
+                    },
+                    { "data": "auditUsuario", "title": "Responsable", "name": "auditUsuario", "width": "20%" },
+                    { "data": "auditDetalle", "title": "Detalle", "name": "auditDetalle", "width": "65%" },
+                ]
+            });
+        });
+    </script>
+}

@@ -1,0 +1,206 @@
+﻿@model List<webCentenario.Models.ViewModels.usuarioViewModel>
+
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Listado de usuarios</h3>
+<br />
+
+<table id="tablaUsuarios" class="table table-hover table-bordered table-responsive-md"></table>
+
+<div class="modal fade" id="eliminarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que quieres eliminar a este usuario? <b>Esta acción no se puede deshacer</b>.
+</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="Eliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¡Ups!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hemos tenido un problema para eliminar el usuario. <b>¡Es posible que esta acción no este permitida!</b>
+                <br /><br />
+                <small class="text-muted cat">— Si crees que es un error, comunicate con el desarrollador.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="userID" hidden />
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#tablaUsuarios").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['5%', '20%', '20%', '20%', '15%', '20%'];
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Usuarios/CargarUsuarios",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "userID", "title": "#", "name": "userID", "width": "4%" },
+                    { "data": "userSocioNombre", "title": "Socio", "name": "userSocioNombre", "width": "16%" },
+                    { "data": "userEmail", "title": "Correo electrónico", "name": "userEmail", "width": "16%" },
+                    { "data": "userRolNombre", "title": "Rol de usuario", "name": "userRolNombre", "width": "16%" },
+                    {
+                        "data": "userFechaCreacion", "title": "Fecha de alta", "name": "userFechaCreacion", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }, "width": "16%" 
+                    },
+                    {
+                        "data": "userUltimoIngreso", "title": "Última conexión", "name": "userUltimoIngreso", "render": function (data) {
+                            if (data == null) {
+                                return "Sin registro";
+                            }
+                            else return moment(data).format('DD/MM/YYYY');
+                        }, "width": "16%" 
+                    },
+                    {
+                        data: null, render: function (data, type, row) {
+                            var editar = '@Url.Action("Modificar", "Usuarios")/' + row.userID;
+                            var detalles = '@Url.Action("Detalles", "Usuarios")/' + row.userID;
+                            return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-secondary" href="' + editar + '">Modificar</a><a class="btn bt-sm btn-secondary" href="' + detalles + '">Detalles</a><a class="btn bt-sm btn-danger" onclick="Confirmar(' + row.userID + ')">Eliminar</a></div>';
+                        }, "width": "16%", "className": "text-center"
+                    }
+                ]
+            });
+        });
+
+        function Confirmar(userID) {
+
+            $("#userID").val(userID);
+            $("#eliminarModal").modal('show');
+        }
+
+        function Eliminar() {
+
+            var userID = $("#userID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "@Url.Action("Eliminar", "Usuarios")",
+                data: { id: userID },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#eliminarModal").modal("hide");
+                        $('#infoModal .modal-body').html(data.message);
+                        $("#infoModal").modal('show');
+
+                        tabla = $('#tablaUsuarios').DataTable();
+                        tabla.draw();
+                    }
+                    else {
+                        $("#eliminarModal").modal("hide");
+                        $("#errorModal").modal('show');
+                    }
+                },
+                error: function (data) {
+                    $("#eliminarModal").modal("hide");
+                    $("#errorModal").modal('show');
+                }
+            })
+        }
+    </script>
+}

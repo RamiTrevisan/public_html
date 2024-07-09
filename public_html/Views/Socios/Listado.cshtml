@@ -1,0 +1,199 @@
+﻿@{
+
+    ViewBag.Title = "Socios activos";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Listado de socios activos</h3>
+<br />
+
+<p class="card-text"><b>Cantidad total de socios activos:</b> @ViewBag.usersTotales</p>
+
+<table id="tablaSocios" class="table table-hover table-bordered table-responsive-md"></table>
+
+<div class="modal fade" id="bajaModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Baja socio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="Preview">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="darBaja()" class="btn btn-sm btn-danger">Dar de baja</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#selCausaBaja").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar causa baja)'
+            });
+
+            $("#tablaSocios").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+                
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3]
+                        }
+                    },
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3]
+                        },
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                                doc.content[1].table.widths = ['10%', '40%', '30%', '20%'];
+
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Socios/CargarSocios",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar... (nombre, apellido, dni o categoría)",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "socioID", "title": "#", "name": "socioID", "width": "50px", "className": "text-center", "orderable": true },
+                    { "data": "socioNombreCompleto", "title": "Nombre y apellido", "name": "socioNombreCompleto", "orderable": true },
+                    { "data": "socioDocumento", "title": "Documento", "name": "socioDocumento", "orderable": false },
+                    { "data": "socioCategoriaNombre", "title": "Categoría", "name": "socioCategoriaNombre", "orderable": false },
+                    { "data": "socioZonaCobro", "title": "Zona de cobro", "name": "socioZonaCobro", "orderable": false },
+                    {
+                        data: null, render: function (data, type, row) {
+                            var detalles = '@Url.Action("Detalles", "Socios")/' + row.socioID;
+                            var editar = '@Url.Action("Modificar", "Socios")/' + row.socioID;
+                            return '<div class="btn-group btn-group-sm" role="group" aria-label="Acciones"><a class="btn bt-sm btn-secondary" href="' + detalles + '">Detalles</a><a class="btn bt-sm btn-secondary" href="' + editar + '">Modificar</a><a class="btn bt-sm btn-danger" onclick="modalBaja(' + row.socioID + ')">Baja</a>';
+                        }, "width": "200px", "className": "text-center", "orderable": false
+                    }
+                ]
+            });
+        });
+
+        function modalBaja(socioID) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Baja", "Socios")',
+                data: { id: socioID },
+                success: function (data) {
+                    $('#Preview').html(data);
+                    $("#bajaModal").modal('show');
+                }
+            })
+        }
+
+        function cargarCausasBaja() {
+            $.ajax({
+                type: "post",
+                url: '@Url.Action("ObtenerCausasBaja", "Socios")',
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $(selCausaBaja).empty();
+                    $.each(data, function (index, row) {
+                        $(selCausaBaja).append($("<option value></option>").val(row.Value).html(row.Text));
+                    });
+                }
+            });
+        }
+
+        function darBaja() {
+            $.ajax({
+                url: '@Url.Action("Baja", "Socios")',
+                type: "POST",
+                data: $("#formBaja").serialize(),
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success == true) {
+                        $("#bajaModal").modal('hide');
+                        $("#infoModal").modal('show');
+                        $('#infoModal .modal-body').html(result.mensaje);
+
+                        tabla = $('#tablaSocios').DataTable();
+                        tabla.draw();
+                    }
+                    else
+                    {
+                        $("#formMensaje").html(result.mensaje);
+                        $("#formMensaje").addClass("text-danger");
+                    }
+                },
+                error: function () {
+                    $("#bajaModal").modal('hide');
+                    $("#infoModal").modal('show');
+                    $('#infoModal .modal-body').html("Tuvimos un problema para actualizar la información del socio. Si el error persiste, comunicate con el desarrollador.");
+                }
+            });
+        }
+    </script>
+}

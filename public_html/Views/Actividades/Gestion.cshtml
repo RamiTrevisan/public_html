@@ -1,0 +1,314 @@
+﻿@model webCentenario.Models.ViewModels.actividadViewModel
+@using webCentenario.Helpers
+
+@{
+    ViewBag.Title = Model.actNombre;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Gestión <b>@Model.actNombre</b></h3>
+<br />
+
+<p class="card-text"><b>Integrantes totales de @Model.actNombre:</b> @ViewBag.inteTotales</p>
+
+<div class="row">
+    <div class="col">
+        @if (Html.ItsAuthorized("Responsable actividad", "Profesor", "Secretaria", "Administrador") == true)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><h5>Integrantes</h5></div>
+                <div class="card-body">
+                    <table id="tablaIntegrantes" class="table table-hover table-bordered table-responsive-md"></table>
+                </div>
+            </div>
+        }
+        @if (Html.ItsAuthorized("Responsable actividad", "Secretaria", "Administrador") == true)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><h5>Cuotas adeudadas</h5></div>
+                <div class="card-body">
+                    <table id="tablaAdeudadas" class="table table-hover table-bordered table-responsive-md"></table>
+                </div>
+            </div>
+        }
+        @if (Html.ItsAuthorized("Responsable actividad", "Secretaria", "Administrador") == true)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><h5>Cuotas cobradas</h5></div>
+                <div class="card-body">
+                    <table id="tablaCobradas" class="table table-hover table-bordered table-responsive-md"></table>
+                </div>
+            </div>
+        }
+
+            @Html.ActionLink("Volver", "Listado", "Actividades", new { }, new { @class = "btn btn-secondary" })
+            @Html.ActionLink("Modificar integrantes", "Integrantes", "Actividades", new { id = Model.actID }, new { @class = "btn btn-primary" })
+        </div>
+</div>
+
+
+@section scripts {
+        <script>
+            $(document).ready(function () {
+                $("#tablaIntegrantes").DataTable({
+
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": false,
+                    "orderMulti": false,
+                    "ordering": false,
+                    "responsive": true,
+                    "autoWidth": false,
+                    "info": false,
+                    "lengthChange": false,
+                    "pageLength": 10,
+                    "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                    "lengthMenu": [
+                        [10, 25, 50, 100, 500, 1000, 5000],
+                        ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                    ],
+
+                    "ajax": {
+                        "url": "/Actividades/CargarIntegrantes",
+                        "type": "POST",
+                        "data": { "id": '@Model.actID' },
+                        "datatype": "json"
+                    },
+
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ filas",
+                        "zeroRecords": "Ningún resultado encontrado",
+                        "info": "Página _PAGE_ de _PAGES_",
+                        "infoEmpty": "Sin datos",
+                        "search": "",
+                        "searchPlaceholder": "Buscar...",
+                        "processing": "Procesando...",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": ">",
+                            "previous": "<"
+                        }
+                    },
+
+                    "buttons": [
+                        {
+                            "extend": 'pageLength',
+                            "className": 'btn btn-secondary',
+                        },
+                        {
+                            "extend": 'excel',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-excel"></i> Excel',
+                            "exportOptions": {
+                                "columns": [0, 1, 2]
+                            }
+                        },
+
+                        {
+                            "extend": 'pdfHtml5',
+                            "download": 'open',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-pdf"></i> PDF',
+                            "exportOptions": {
+                                "columns": [0, 1, 2]
+                            },
+
+                            customize: function (doc) {
+                                doc.content[1].table.widths =
+                                    Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                                doc.content[1].table.widths = ['10%', '45%', '45%'];
+                            }
+                        },
+                    ],
+
+                    "columns": [
+                        { "data": "iactID", "title": "#", "name": "iactID", "width": "6%", "className": "text-center" },
+                        { "data": "iactNombreSocio", "title": "Socio", "name": "iactNombreSocio" },
+                        { "data": "iactDocumento", "title": "Documento", "name": "iactDocumento" },
+                    ]
+                });
+
+                $("#tablaAdeudadas").DataTable({
+
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": false,
+                    "orderMulti": false,
+                    "ordering": false,
+                    "responsive": true,
+                    "autoWidth": false,
+                    "info": false,
+                    "lengthChange": false,
+                    "pageLength": 10,
+                    "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                    "lengthMenu": [
+                        [10, 25, 50, 100, 500, 1000, 5000],
+                        ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                    ],
+
+                    "buttons": [
+                        {
+                            "extend": 'pageLength',
+                            "className": 'btn btn-secondary',
+                        },
+                        {
+                            "extend": 'excel',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-excel"></i> Excel',
+                            "exportOptions": {
+                                "columns": [0, 1, 2, 3, 4]
+                            }
+                        },
+
+                        {
+                            "extend": 'pdfHtml5',
+                            "download": 'open',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-pdf"></i> PDF',
+                            "exportOptions": {
+                                "columns": [0, 1, 2, 3, 4]
+                            },
+
+                            customize: function (doc) {
+                                doc.content[1].table.widths =
+                                    Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                                doc.content[1].table.widths = ['5%', '40%', '20%', '20%', '15%'];
+                            }
+                        },
+                    ],
+
+                    "ajax": {
+                        "url": "/Actividades/CargarAdeudadas",
+                        "type": "POST",
+                        "data": { "id": '@Model.actID' },
+                        "datatype": "json"
+                    },
+
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ filas",
+                        "zeroRecords": "Ningún resultado encontrado",
+                        "info": "Página _PAGE_ de _PAGES_",
+                        "infoEmpty": "Sin datos",
+                        "search": "",
+                        "searchPlaceholder": "Buscar...",
+                        "processing": "PractIDcesaactIDdo...",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": ">",
+                            "previous": "<"
+                        }
+                    },
+
+                    "columns": [
+                        { "data": "caID", "title": "#", "name": "csID", "width": "5%", "className": "text-center" },
+                        { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "19%" },
+                        {
+                            "data": "caFechaPeriodo", "title": "Período", "name": "csFechaPeriodo", "render": function (data) {
+                                return moment(data).format('MMMM YYYY');
+                            }, "width": "19%"
+                        },
+                        {
+                            "data": "caFechaVencimiento", "title": "Vencimiento", "name": "csFechaVencimiento", "render": function (data) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }, "width": "19%"
+                        },
+                        { "data": "caMonto", "title": "Monto", "name": "csMonto", "width": "19%" }
+                    ]
+                });
+
+                $("#tablaCobradas").DataTable({
+
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": false,
+                    "orderMulti": false,
+                    "ordering": false,
+                    "responsive": true,
+                    "autoWidth": false,
+                    "info": false,
+                    "lengthChange": false,
+                    "pageLength": 10,
+                    "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                    "lengthMenu": [
+                        [10, 25, 50, 100, 500, 1000, 5000],
+                        ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                    ],
+
+                    "buttons": [
+                        {
+                            "extend": 'pageLength',
+                            "className": 'btn btn-secondary',
+                        },
+                        {
+                            "extend": 'excel',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-excel"></i> Excel',
+                            "exportOptions": {
+                                "columns": [0, 1, 2, 3, 4]
+                            }
+                        },
+
+                        {
+                            "extend": 'pdfHtml5',
+                            "download": 'open',
+                            "className": 'btn btn-secondary',
+                            "text": '<i class="far fa-file-pdf"></i> PDF',
+                            "exportOptions": {
+                                "columns": [0, 1, 2, 3, 4]
+                            },
+
+                            customize: function (doc) {
+                                doc.content[1].table.widths =
+                                    Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                                doc.content[1].table.widths = ['5%', '40%', '20%', '20%', '15%'];
+                            }
+                        },
+                    ],
+
+                    "ajax": {
+                        "url": "/Actividades/CargarCobradas",
+                        "type": "POST",
+                        "data": { "id": '@Model.actID' },
+                        "datatype": "json"
+                    },
+
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ filas",
+                        "zeroRecords": "Ningún resultado encontrado",
+                        "info": "Página _PAGE_ de _PAGES_",
+                        "infoEmpty": "Sin datos",
+                        "search": "",
+                        "searchPlaceholder": "Buscar...",
+                        "processing": "Procesando...",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": ">",
+                            "previous": "<"
+                        }
+                    },
+
+                    "columns": [
+                        { "data": "caID", "title": "#", "name": "csID", "width": "5%", "className": "text-center" },
+                        { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "19%" },
+                        {
+                            "data": "caFechaPeriodo", "title": "Período", "name": "csFechaPeriodo", "render": function (data) {
+                                return moment(data).format('MMMM YYYY');
+                            }, "width": "19%"
+                        },
+                        {
+                            "data": "caFechaPago", "title": "Fecha de pago", "name": "csFechaPago", "render": function (data) {
+                                return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                            }, "width": "19%"
+                        },
+                        { "data": "caMonto", "title": "Monto", "name": "csMonto", "width": "19%" }
+                    ]
+                });
+            });
+        </script>
+}

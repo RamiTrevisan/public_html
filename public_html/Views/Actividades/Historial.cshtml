@@ -1,0 +1,95 @@
+﻿@model List<webCentenario.Models.ViewModels.cuotaActividadViewModel>
+
+@{
+    ViewBag.Title = "Historial de pagos";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Historial de pagos de actividades</h3>
+<br />
+
+<table id="tablaCuotas" class="table table-hover table-bordered table-responsive-md"></table>
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $("#tablaCuotas").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 25,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    }
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100],
+                    ['10 filas', '25 filas', '50 filas', '100 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Actividades/CargarHistorial",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false
+                    }
+                ],
+
+                "columns": [
+                    { "data": "caID", "title": "#", "name": "caID" },
+                    { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "20%" },
+                    { "data": "caActividadNombre", "title": "Categoría", "name": "caActividadNombre", "width": "20%" },
+                    {
+                        "data": "caFechaPeriodo", "title": "Período", "name": "caFechaPeriodo", "render": function (data) {
+                            return moment(data).format('MMMM YYYY');
+                        }, "width": "20%"
+                    },
+                    {
+                        "data": "caFechaPago", "title": "Fecha de pago", "name": "caFechaPago", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY, HH:mm:ss a');
+                        }, "width": "20%"
+                    },
+                    { "data": "caMonto", "title": "Monto", "name": "caMonto", "width": "20%" }
+                ],
+
+                "createdRow": function (row, data, index) {
+                    if (data.caEstadoID == 2) {
+                        $('td', row).css('background-color', '#FDF0B5')
+                    }
+                }
+            });
+        });
+    </script>
+}

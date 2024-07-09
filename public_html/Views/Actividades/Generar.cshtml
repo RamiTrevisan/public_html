@@ -1,0 +1,152 @@
+﻿@model webCentenario.Models.ViewModels.generarCuotaActividadViewModel
+
+@{
+    ViewBag.Title = "Generar cuotas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Generar cuotas</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col mb-3">
+        <div class="card mb-3">
+            <div class="card-body">
+                @using (Html.BeginForm("Generar", "Actividades"))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selActividad, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selActividad, Model.actsList, "(Seleccionar actividad)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selActividad, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.selSocio, htmlAttributes: new { @class = "form-label" })
+                            @Html.DropDownListFor(model => model.selSocio, new SelectList("", "", ""), "(Seleccionar integrante)", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.selSocio, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.caFechaPeriodo, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.caFechaPeriodo, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.caFechaPeriodo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.caFechaVencimiento, htmlAttributes: new { @class = "form-label" })
+                            @Html.EditorFor(model => model.caFechaVencimiento, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.caFechaVencimiento, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.caMonto, htmlAttributes: new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                @Html.TextBoxFor(model => model.caMonto, new { @class = "form-control" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.caMonto, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Generar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@*
+    <div class="modal fade" id="esperaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-5">
+                    <div class="overlay">
+                        <i class="fa fa-spinner  fa-spin fa-2x w-100 mb-2"></i>
+                        <h5 class="text-center">Generando...</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+*@
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#btnSubmit").html('Generar');
+            $("#btnSubmit").prop("disabled", false);
+            $('#infoModal').modal('show');
+
+            $("#selActividad").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar actividad)',
+                minimumResultsForSearch: -1,
+                width: 'auto'
+            });
+
+            $("#selSocio").select2({
+                theme: "bootstrap",
+                placeholder: '(Seleccionar integrante)',
+                width: 'auto'
+            });
+
+            var opTodos = new Option("TODOS LOS INTEGRANTES", -1, true, true);
+            $(selSocio).append(opTodos).trigger('change');
+
+            $(selActividad).change(function () {
+                ObtenerSocios();
+            });
+
+            if ($(selActividad).val() != null) {
+                ObtenerSocios();
+            }
+
+            function ObtenerSocios() {
+                $.ajax({
+                    type: "post",
+                    url: "/Cuotas/ObtenerSocios",
+                    data: { actid: $(selActividad).val(), accion: "integrantes" },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $(selSocio).empty();
+                        $(selSocio).append(opTodos).trigger('change');
+                        $.each(data, function (index, row) {
+                            $(selSocio).append($("<option value></option>").val(row.Value).html(row.Text));
+                        });
+                    }
+                });
+            }
+
+            $('form').submit(function () {
+                $("#btnSubmit").prop("disabled", true);
+                $("#btnSubmit").html('<i class="fa fa-spinner fa-spin"></i> Generando...');
+            });
+        });
+    </script>
+}
+

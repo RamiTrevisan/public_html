@@ -1,0 +1,57 @@
+﻿@model webCentenario.Models.ViewModels.categoriasViewModel
+
+@{
+    ViewBag.Title = "Categoría " + Model.catNombre;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Detalles de la categoría <b>@Model.catNombre</b></h3>
+<br />
+
+<div class="row">
+    <div class="col">
+        <div class="card mb-3">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.catDescripcion):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.catDescripcion)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.catPrecioCuota):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.catPrecioCuota)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.catPrecioSepelio):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.catPrecioSepelio)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.catEdadMax):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.catEdadMax)
+                    </dd>
+
+                    <dt class="col-md-2 text-right">
+                        @Html.DisplayNameFor(model => model.catSiguienteNombre):
+                    </dt>
+                    <dd class="col-md-10">
+                        @Html.DisplayFor(model => model.catSiguienteNombre)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        @Html.ActionLink("Volver", "Listado", "Categorias", new { }, new { @class = "btn btn-secondary" })
+        @Html.ActionLink("Modificar", "Modificar", "Categorias", new { id = Model.catID }, new { @class = "btn btn-secondary" })
+        <button type="button" class="btn btn-danger">Eliminar</button>
+    </div>
+</div>

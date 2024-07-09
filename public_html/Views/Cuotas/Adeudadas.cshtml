@@ -1,0 +1,161 @@
+﻿@model List<webCentenario.Models.ViewModels.cuotaSocioViewModel>
+
+@{
+    ViewBag.Title = "Cuotas adeudadas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h3>Filtrar por fechas de vencimiento</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="fechaDesde">Fecha desde:</label>
+                <input type="date" id="fechaDesde" name="fechaDesde" class="form-control" />
+            </div>
+
+            <div class="col-md-6">
+                <label for="fechaHasta">Fecha hasta:</label>
+                <input type="date" id="fechaHasta" name="fechaHasta" class="form-control" />
+            </div>
+
+            <div class="col-md-12 mt-3">
+                <input class="btn btn-primary" type="button" id="btnBuscar" value="Filtrar" />
+                <input class="btn btn-primary" type="button" id="btnRecargar" value="Recargar tabla sin filtro" />
+            </div>
+        </div>
+    </div>
+</div>    
+
+<div class="card">
+    <div class="card-header">
+        <h3>Listado de cuotas adeudadas</h3>
+    </div>
+    <div class="card-body">
+        <table id="tablaAdeudadas" class="table table-hover table-bordered table-responsive-md"></table>
+    </div>
+</div>
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#errorModal').modal('show');
+
+            var table = $("#tablaAdeudadas").DataTable({
+
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "ordering": false,
+                "responsive": true,
+                "autoWidth": false,
+                "pageLength": 10,
+                "dom": "<'row'<'col-sm-6 col-xs-12'B><'col-sm-6 col-xs-12'f>><'row'<'col-12'rt>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+
+                "buttons": [
+                    {
+                        "extend": 'pageLength',
+                        "className": 'btn btn-secondary',
+                    },
+                    {
+                        "extend": 'excel',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-excel"></i> Excel',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        }
+                    },
+
+                    {
+                        "extend": 'pdfHtml5',
+                        "download": 'open',
+                        "className": 'btn btn-secondary',
+                        "text": '<i class="far fa-file-pdf"></i> PDF',
+                        "exportOptions": {
+                            "columns": [0, 1, 2, 3, 4, 5]
+                        },
+
+                        customize: function (doc) {
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            doc.content[1].table.widths = ['10%', '30%', '15%', '20%', '15%', '10%'];
+                        }
+                    },
+                ],
+
+                "lengthMenu": [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    ['10 filas', '25 filas', '50 filas', '100 filas', '500 filas', '1000 filas', '5000 filas']
+                ],
+
+                "ajax": {
+                    "url": "/Cuotas/CargarAdeudadas",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "zeroRecords": "Ningún resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Sin datos",
+                    "search": "",
+                    "searchPlaceholder": "Buscar...",
+                    "processing": "Procesando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": ">",
+                        "previous": "<"
+                    }
+                },
+
+                "columns": [
+                    { "data": "csID", "title": "#", "name": "socioID", "width": "1%" },
+                    { "data": "socioNombreCompleto", "title": "Socio", "name": "socioNombre", "width": "20%" },
+                    { "data": "csCategoriaNombre", "title": "Categoría", "name": "csCategoriaNombre", "width": "20%" },
+                    {
+                        "data": "csFechaPeriodo", "title": "Período", "name": "csFechaPeriodo", "render": function (data) {
+                            return moment(data).format('MMMM YYYY');
+                        }, "width": "20%"
+                    },
+                    {
+                        "data": "csFechaVencimiento", "title": "Vencimiento", "name": "csFechaVencimiento", "render": function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }, "width": "20%"
+                    },
+                    { "data": "csMonto", "title": "Monto", "name": "csMonto", "width": "19%" }
+                ]
+            });
+            // Función para recargar la tabla
+
+            function recargarTabla() {
+                var fechaDesde = $('#fechaDesde').val();
+                var fechaHasta = $('#fechaHasta').val();
+                table.ajax.url("/Cuotas/CargarAdeudadas?fechaDesde=" + fechaDesde + "&fechaHasta=" + fechaHasta).load();
+            }
+            // Ejecutar búsqueda al presionar botón Buscar
+            $('#btnBuscar').on('click', function () {
+                recargarTabla();
+            });
+
+            //// Ejecutar búsqueda al cambiar fechaDesde o fechaHasta
+            //$('#fechaDesde, #fechaHasta').on('change', function () {
+            //    recargarTabla();
+            //});
+
+            function recargarTablaSinFiltro() {
+                $('#fechaDesde').val(null);
+                $('#fechaHasta').val(null);
+                table.ajax.url("/Cuotas/CargarAdeudadas").load();
+            }
+
+            // Asignar el evento click al botón
+            $('#btnRecargar').on('click', recargarTablaSinFiltro);
+        });
+    </script>
+}

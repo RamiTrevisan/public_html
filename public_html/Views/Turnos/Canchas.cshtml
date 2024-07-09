@@ -1,0 +1,135 @@
+﻿@model webCentenario.Models.ViewModels.turnosViewModel
+
+@{
+    ViewBag.Title = "Reservar canchas";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    List<SelectListItem> Actividades = (List<SelectListItem>)ViewBag.actLista;
+    List<SelectListItem> Pagos = (List<SelectListItem>)ViewBag.fpago;
+    List<SelectListItem> Jugadores = (List<SelectListItem>)ViewBag.Jugadores;
+}
+
+<h3>Alquiler de Canchas</h3>
+<br />
+
+<div class="card p-3">
+
+    @using (Html.BeginForm("Turnos", "Turnos", FormMethod.Post))
+    {
+        <div class="row">
+
+            <!-- Usuario -->
+            <div class="modal-header mb-3">
+                <label><b>Usuario: </b>@HttpContext.Current.Session["userEmail"].ToString()</label>
+            </div>
+
+
+            <!-- Actividad -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Actividad)
+                    @Html.DropDownList("Actividad", Actividades, new { @class = "form-control form-select" })
+                    @Html.ValidationMessage("Actividad", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Cancha -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Cancha)
+                    @Html.DropDownList("Cancha", new SelectList(""), new { @class = "form-control form-select" })
+                    @Html.ValidationMessage("Cancha", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Fecha -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Fecha)
+                    @Html.EditorFor(p => p.Fecha, new { htmlAttributes = new { @class = "form-control", type = "date", @Value = System.DateTime.Now.ToString("yyyy-MM-dd") } })
+                    @Html.ValidationMessage("Fecha", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Horario -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Hora)
+                    @Html.DropDownList("Hora", new SelectList(""), new { @class = "form-control form-select" })
+                    @Html.ValidationMessage("Hora", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Nro de Jugadores -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Jugadores)
+                    @Html.DropDownList("Jugadores", Jugadores, "(Seleccionar forma de pago)", new { @class = "form-control form-select" })
+                </div>
+            </div>
+
+            <!-- Forma de pago -->
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.FdPago)
+                    @Html.DropDownList("FdPago", Pagos, "(Seleccionar forma de pago)", new { @class = "form-control form-select" })
+                    @Html.ValidationMessage("FdPago", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- btnReservar -->
+            <div class="col-md-12 mt-3">
+                <button type="submit" id="reservar" name="reservar" value="Reservar" class="btn btn-primary">Reservar</button>
+                @*<a class="btn btn-secondary" href="@Url.Action("Inicio", "Sistema")">Volver</a>*@
+            </div>
+        </div>
+    }
+    
+</div><!-- Cierre card -->
+    
+<script>
+
+    $(document).ready(function () {
+        console.log("1");
+        $(Actividad).change(function () {
+            console.log(1);
+            $.ajax({
+                type: "post",
+                url: "/Turnos/ObtenerTurnos",
+                data: { id: $(Actividad).val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $(Cancha).empty();
+
+
+                    $.each(data, function (index, row) {
+                        $(Cancha).append($("<option value></option>").val(row.Value).html(row.Text));
+                    });
+                }
+            });
+        });
+
+        $(Cancha).change(function () {
+            console.log(1);
+            $.ajax({
+                type: "post",
+                url: "/Turnos/ObtenerHora",
+                data: { id: $(Cancha).val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $(Hora).empty();
+
+                    $.each(data, function (index, row) {
+                        $(Hora).append($("<option value></option>").val(row.Value).html(row.Text));
+                    });
+                }
+            });
+        });
+    });
+
+
+</script>
+
+
+

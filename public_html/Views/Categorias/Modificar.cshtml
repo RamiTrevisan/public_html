@@ -1,0 +1,148 @@
+﻿@model webCentenario.Models.ViewModels.categoriasViewModel
+@{
+    ViewBag.Title = "Modificar categoría";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h3>Modificar categoría</h3>
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¡Listo!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Raw(ViewBag.Message)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("Modificar", "Categorias", FormMethod.Post))
+{
+<div class="row">
+    <div class="col">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.catID)
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.catNombre, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.catNombre, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.catNombre, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-3">
+                        @Html.LabelFor(model => model.catPrecioCuota, htmlAttributes: new { @class = "form-label" })
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(model => model.catPrecioCuota, new { @class = "form-control" })
+                            <span class="input-group-text">.00</span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.catPrecioCuota, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-3">
+                        @Html.LabelFor(model => model.catPrecioSepelio, htmlAttributes: new { @class = "form-label" })
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(model => model.catPrecioSepelio, new { @class = "form-control" })
+                            <span class="input-group-text">.00</span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.catPrecioSepelio, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.catEdadMax, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.catEdadMax, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.catEdadMax, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-lg-6 col-md-8">
+                        @Html.LabelFor(model => model.selSiguiente, htmlAttributes: new { @class = "form-label" })
+                        @Html.DropDownListFor(model => model.selSiguiente, Model.catsList, "(Seleccionar categoría)", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.selSiguiente, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-lg-2 col-sm-12">
+                        <label>
+                            Cuotas
+                        </label>
+                        <label id="cb" class="btn btn-block btn-outline-primary">
+                            @Html.CheckBoxFor(model => model.catGeneraCuota, new { @class = "btn-check" })
+                            <label for="catGeneraCuota" class="form-check-label" style = "cursor: pointer;"></label>
+                        </label>
+                    </div>
+
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.catDescripcion, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextAreaFor(model => model.catDescripcion, new { @class = "form-control", @row = 5 })
+                        @Html.ValidationMessageFor(model => model.catDescripcion, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col">
+                        @Html.ActionLink("Volver", "Listado", "Categorias", new { }, new { @class = "btn btn-secondary" })
+                        <input type="submit" value="Guardar" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#infoModal").modal('show');
+
+            $("#catGeneraCuota").ready(function () {
+                if ($("#catGeneraCuota").is(":checked")) {
+                    Genera(true);
+                }
+                else {
+                    Genera(false);
+                }
+            });
+
+            $("#catGeneraCuota").change(function () {
+                if ($("#catGeneraCuota").is(":checked")) {
+                    Genera(true);
+                }
+                else {
+                    Genera(false);
+                }
+            });
+
+            function Genera(genera) {
+                switch (genera) {
+                    case true: {
+                        $("#cb").removeClass('btn-outline-primary').addClass('btn-primary');
+                        $("label[for*='catGeneraCuota']").html('Genera cuotas');
+                        break;
+                    }
+                    case false: {
+                        $("#cb").removeClass('btn-primary').addClass('btn-outline-primary');
+                        $("label[for*='catGeneraCuota']").html('No genera cuotas');
+                        break;
+                    }
+                    default: {
+                        $("#cb").removeClass('btn-primary').addClass('btn-outline-primary');
+                        $("label[for*='catGeneraCuota']").html('No genera cuotas');
+                        break;
+                    }
+                }
+            }
+        });
+    </script>
+}

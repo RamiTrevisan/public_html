@@ -1,0 +1,49 @@
+﻿@model List<webCentenario.Models.ViewModels.cuotaSocioViewModel>
+
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+
+<style>
+    .flexrow {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex !important;
+    }
+
+        .flexrow > div {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+        }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive-sm">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Socio</th>
+                        <th>Categoría</th>
+                        <th>Período</th>
+                        <th>Fecha de pago</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td>@item.socioNombreCompleto</td>
+                            <td>@item.csCategoriaNombre</td>
+                            <td>@item.csFechaPeriodo.ToString("MMMM yyyy")</td>
+                            <td>@item.csFechaPago.ToString()</td>
+                            <td>@item.csMonto</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

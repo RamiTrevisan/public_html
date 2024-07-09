@@ -1,0 +1,22 @@
+﻿@model webCentenario.Models.ViewModels.turnosViewModel
+@{
+    //Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>homeReserveas</title>
+</head>
+<body>
+
+    <div>
+        <a href="@Url.Action("homeReservas", "Turnos", new { id = Model.UsuarioID })">Ver detalles del producto</a>
+        @*@Html.ActionLink("Padel", "homeReservas")*@
+        @*@Html.ActionLink("", "", new {id = nombreVariable })*@
+    </div>
+</body>
+</html>
